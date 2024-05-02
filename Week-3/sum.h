@@ -1,6 +1,8 @@
 #ifndef SUM_H
 #define SUM_H
 
-int Sum(int x, int y);
+#include <cstdint>
+
+int64_t Sum(int64_t x, int64_t y);
 
 #endif
