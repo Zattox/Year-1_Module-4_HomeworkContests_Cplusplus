@@ -37,11 +37,20 @@ int main() {
     (y += std::as_const(x)) = {-13, 3};
 
     if (0 > x) {
-      cout << "chego";
+      cout << "test 1\n";
     }
     if (x < 0) {
-      cout << "da blya";
+      cout << "test 2\n";
     }
+
+    Rational rational;
+    int numerator = 7;
+    if (rational.GetNumerator() == numerator) {
+      cout << 12;
+    }
+
+    cin >> rational;
+    cout << rational;
   } catch (const std::exception e){
     std::cerr << e.what() << std::endl;
   }
