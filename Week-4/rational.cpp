@@ -1,14 +1,18 @@
 #include "rational.h"
 
-Rational::Rational() : numerator_(0), denominator_(1) {
-
+Rational::Rational() {
+  numerator_ = 0;
+  denominator_ = 1;
 }
 
-Rational::Rational(const int &number) : numerator_(number), denominator_(1) {
-
+Rational::Rational(const int &number) {
+  numerator_ = number;
+  denominator_ = 1;
 }
 
-Rational::Rational(const int &numerator, const int &denominator) : numerator_(numerator), denominator_(denominator) {
+Rational::Rational(const int &numerator, const int &denominator) {
+  numerator_ = numerator;
+  denominator_ = denominator;
   Reduction();
 }
 
@@ -30,137 +34,6 @@ void Rational::SetDenominator(const int &number) {
   Reduction();
 }
 
-Rational Rational::operator+(const Rational &value) const {
-  int new_numerator = numerator_ * value.denominator_ + value.numerator_ * denominator_;
-  int new_denominator = denominator_ * value.denominator_;
-  Rational fraction(new_numerator, new_denominator);
-  fraction.Reduction();
-
-  return fraction;
-}
-
-Rational Rational::operator-(const Rational &value) const {
-  int new_numerator = numerator_ * value.denominator_ - value.numerator_ * denominator_;
-  int new_denominator = denominator_ * value.denominator_;
-  Rational fraction(new_numerator, new_denominator);
-  fraction.Reduction();
-
-  return fraction;
-}
-
-Rational Rational::operator*(const Rational &value) const {
-  int new_numerator = numerator_ * value.numerator_;
-  int new_denominator = denominator_ * value.denominator_;
-  Rational fraction(new_numerator, new_denominator);
-  fraction.Reduction();
-
-  return fraction;
-}
-
-Rational Rational::operator/(const Rational &value) const {
-  int new_numerator = numerator_ * value.denominator_;
-  int new_denominator = value.numerator_ * denominator_;
-  Rational fraction(new_numerator, new_denominator);
-  fraction.Reduction();
-
-  return fraction;
-}
-
-Rational &Rational::operator=(Rational value) {
-  value.Reduction();
-  Update(value);
-  return *this;
-}
-
-Rational &Rational::operator+=(const Rational &value) {
-  *this = *this + value;
-  return *this;
-}
-
-Rational &Rational::operator-=(const Rational &value) {
-  *this = *this - value;
-  return *this;
-}
-
-Rational &Rational::operator*=(const Rational &value) {
-  *this = *this * value;
-  return *this;
-}
-
-Rational &Rational::operator/=(const Rational &value) {
-  *this = *this / value;
-  return *this;
-}
-
-Rational Rational::operator+() const {
-  return *this;
-}
-
-Rational Rational::operator-() const {
-  int new_numerator = -numerator_;
-  int new_denominator = denominator_;
-
-  Rational fraction(new_numerator, new_denominator);
-  fraction.Reduction();
-
-  return fraction;
-}
-
-Rational &Rational::operator++() {
-  numerator_ += denominator_;
-  Reduction();
-  return *this;
-}
-
-Rational &Rational::operator--() {
-  numerator_ -= denominator_;
-  Reduction();
-  return *this;
-}
-
-const Rational Rational::operator++(int) {
-  const Rational copy = *this;
-  numerator_ += denominator_;
-  return copy;
-}
-
-const Rational Rational::operator--(int) {
-  const Rational copy = *this;
-  numerator_ -= denominator_;
-  return copy;
-}
-
-bool Rational::operator==(const Rational &value) const {
-  return (numerator_ == value.numerator_)
-      && (denominator_ == value.denominator_);
-}
-
-bool Rational::operator!=(const Rational &value) const {
-  return !(*this == value);
-}
-
-bool Rational::operator<(const Rational &value) const {
-  if (numerator_ * value.denominator_ < value.numerator_ * denominator_) {
-    return true;
-  }
-  return false;
-}
-
-bool Rational::operator>(const Rational &value) const {
-  if (numerator_ * value.denominator_ > value.numerator_ * denominator_) {
-    return true;
-  }
-  return false;
-}
-
-bool Rational::operator<=(const Rational &value) const {
-  return !(*this < value);
-}
-
-bool Rational::operator>=(const Rational &value) const {
-  return !(*this > value);
-}
-
 std::ostream &operator<<(std::ostream &out, const Rational &value) {
   if (value.GetDenominator() != 1) {
     out << value.GetNumerator() << '/' << value.GetDenominator();
@@ -176,7 +49,7 @@ std::istream &operator>>(std::istream &in, Rational &value) {
 
   if (in) {
     std::string string_numerator;
-    int ind = 0;
+    size_t ind = 0;
     while (ind < data.size() && data[ind] != '/') {
       string_numerator.push_back(data[ind]);
       ++ind;
@@ -189,6 +62,10 @@ std::istream &operator>>(std::istream &in, Rational &value) {
       ++ind;
     }
 
+    if (string_denominator.empty()) {
+      string_denominator = "1";
+    }
+
     if (!string_numerator.empty() && !string_denominator.empty()) {
       int num = atoi(string_numerator.c_str());
       int den = atoi(string_denominator.c_str());
@@ -198,7 +75,6 @@ std::istream &operator>>(std::istream &in, Rational &value) {
       value = fraction;
     }
   }
-
   return in;
 }
 
@@ -216,7 +92,124 @@ void Rational::Reduction() {
   denominator_ /= gcd;
 }
 
-void Rational::Update(Rational &fraction) {
-  std::swap(numerator_, fraction.numerator_);
-  std::swap(denominator_, fraction.denominator_);
+Rational operator+(const Rational &fraction1, const Rational &fraction2) {
+  int res_numerator =
+      fraction1.GetNumerator() * fraction2.GetDenominator() + fraction2.GetNumerator() * fraction1.GetDenominator();
+  int res_denominator = fraction1.GetDenominator() * fraction2.GetDenominator();
+  Rational result = {res_numerator, res_denominator};
+  result.Reduction();
+  return result;
+}
+
+Rational operator-(const Rational &fraction1, const Rational &fraction2) {
+  int res_numerator =
+      fraction1.GetNumerator() * fraction2.GetDenominator() - fraction2.GetNumerator() * fraction1.GetDenominator();
+  int res_denominator = fraction1.GetDenominator() * fraction2.GetDenominator();
+  Rational result = {res_numerator, res_denominator};
+  result.Reduction();
+  return result;
+}
+
+Rational operator*(const Rational &fraction1, const Rational &fraction2) {
+  int res_numerator = fraction1.GetNumerator() * fraction2.GetNumerator();
+  int res_denominator = fraction1.GetDenominator() * fraction2.GetDenominator();
+  Rational result = {res_numerator, res_denominator};
+  result.Reduction();
+  return result;
+}
+
+Rational operator/(const Rational &fraction1, const Rational &fraction2) {
+  int res_numerator = fraction1.GetNumerator() * fraction2.GetDenominator();
+  int res_denominator = fraction1.GetDenominator() * fraction2.GetNumerator();
+  Rational result = {res_numerator, res_denominator};
+  result.Reduction();
+  return result;
+}
+
+Rational &operator+=(Rational &fraction1, const Rational &fraction2) {
+  Rational &result = fraction1;
+  result = result + fraction2;
+  return result;
+}
+
+Rational &operator-=(Rational &fraction1, const Rational &fraction2) {
+  Rational &result = fraction1;
+  result = result - fraction2;
+  return result;
+}
+
+Rational &operator*=(Rational &fraction1, const Rational &fraction2) {
+  Rational &result = fraction1;
+  result = result * fraction2;
+  return result;
+}
+
+Rational &operator/=(Rational &fraction1, const Rational &fraction2) {
+  Rational &result = fraction1;
+  result = result / fraction2;
+  return result;
+}
+
+Rational operator+(const Rational &fraction) {
+  Rational result = {fraction.GetNumerator(), fraction.GetDenominator()};
+  return result;
+}
+
+Rational operator-(const Rational &fraction) {
+  Rational result = {-fraction.GetNumerator(), fraction.GetDenominator()};
+  return result;
+}
+
+Rational &operator++(Rational &fraction) {
+  int numerator = fraction.GetNumerator();
+  int denominator = fraction.GetDenominator();
+  fraction.SetNumerator(numerator + denominator);
+  return fraction;
+}
+
+Rational &operator--(Rational &fraction) {
+  int numerator = fraction.GetNumerator();
+  int denominator = fraction.GetDenominator();
+  fraction.SetNumerator(numerator - denominator);
+  return fraction;
+}
+
+const Rational operator++(Rational &fraction, int) {
+  const Rational tmp = fraction;
+  fraction.SetNumerator(tmp.GetNumerator() + tmp.GetDenominator());
+  return tmp;
+}
+
+const Rational operator--(Rational &fraction, int) {
+  const Rational tmp = fraction;
+  fraction.SetNumerator(tmp.GetNumerator() - tmp.GetDenominator());
+  return tmp;
+}
+
+bool operator==(const Rational &fraction1, const Rational &fraction2) {
+  return (fraction1.GetNumerator() == fraction2.GetNumerator())
+      && (fraction1.GetDenominator() == fraction2.GetDenominator());
+}
+
+bool operator!=(const Rational &fraction1, const Rational &fraction2) {
+  return (fraction1.GetNumerator() != fraction2.GetNumerator())
+      || (fraction1.GetDenominator() != fraction2.GetDenominator());
+}
+
+bool operator<(const Rational &fraction1, const Rational &fraction2) {
+  return (fraction1.GetNumerator() * fraction2.GetDenominator())
+      < (fraction2.GetNumerator() * fraction1.GetDenominator());
+}
+
+bool operator>(const Rational &fraction1, const Rational &fraction2) {
+  return (fraction1.GetNumerator() * fraction2.GetDenominator())
+      > (fraction2.GetNumerator() * fraction1.GetDenominator());
+}
+
+bool operator<=(const Rational &fraction1, const Rational &fraction2) {
+  return !(fraction1 > fraction2);
+}
+
+bool operator>=(const Rational &fraction1, const Rational &fraction2) {
+  return !(fraction1 < fraction2);
 }
