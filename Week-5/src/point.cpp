@@ -1,44 +1,59 @@
 #include "../point.h"
+#include "../vector.h"
 
-Point::Point() : x_(0), y_(0) {}
+using Geometry::Vector, Geometry::Point, Geometry::IShape;
 
-Point::Point(int x, int y) : x_(x), y_(y) {}
+Point::Point() : point_(0, 0) {}
 
-int Point::GetX() const {
-  return x_;
+Point::Point(int64_t x, int64_t y) : point_(x, y) {}
+
+Point::Point(const Point &point) : point_(point.point_) {}
+
+Point::Point(const Vector &vector) : point_(vector) {}
+
+Point &Point::operator=(const Point &point) = default;
+
+bool Point::operator==(const Point &vector) const {
+  return (point_ == vector);
 }
 
-int Point::GetY() const {
-  return y_;
+bool Point::operator!=(const Point &vector) const {
+  return (point_ != vector);
 }
 
-void Point::SetX(const int &number) {
-  x_ = number;
+Vector Point::GetVec() const {
+  return point_;
 }
 
-void Point::SetY(const int &number) {
-  y_ = number;
+bool Point::ContainsPoint(const Point &point) const {
+  return point == *this;
 }
 
-std::ostream &operator<<(std::ostream &out, const Point &value) {
-  out << "Point(" << value.GetX() << ',' << value.GetY() << ')';
+bool Point::CrossesSegment(const Geometry::Segment &segment) const {
+  return segment.ContainsPoint(*this);
+}
+
+std::string Point::ToString() const {
+  std::string text = "Point(";
+  text += std::to_string(point_.GetX());
+  text += ',';
+  text += std::to_string(point_.GetY());
+  text += ')';
+  return text;
+}
+
+std::ostream &Geometry::operator<<(std::ostream &out, const Point &value) {
+  out << value.ToString();
   return out;
 }
 
-std::istream &operator>>(std::istream &in, Point &value) {
-  int first_num, second_num;
+std::istream &Geometry::operator>>(std::istream &in, Point &value) {
+  int64_t first_num, second_num;
   in >> first_num >> second_num;
   if (in) {
-    value.SetX(first_num);
-    value.SetY(second_num);
+    value.point_.x_ = first_num;
+    value.point_.y_ = second_num;
   }
   return in;
 }
 
-bool operator==(const Point &p1, const Point &p2) {
-  return (p1.GetX() == p2.GetY()) && (p1.GetY() == p2.GetY());
-}
-
-bool operator!=(const Point &p1, const Point &p2) {
-  return !(p1 == p2);
-}
