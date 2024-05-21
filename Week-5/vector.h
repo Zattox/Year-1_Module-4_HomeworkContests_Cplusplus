@@ -1,47 +1,44 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <cmath>
+#include "Geometry.h"
 
-class RationalDivisionByZero : public std::runtime_error {
- public:
-  RationalDivisionByZero() : std::runtime_error("RationalDivisionByZero") {
-  }
-};
-
-class Vector {
+class Geometry::Vector {
  public:
   Vector();
-  Vector(int64_t coor_x, int64_t coor_y);
-  Vector(const Vector& vec);
+  Vector(int64_t x, int64_t y);
+  Vector(const Vector &vec);
 
-  [[nodiscard]] int64_t GetX() const;
-  [[nodiscard]] int64_t GetY() const;
   void SetX(int64_t &value);
   void SetY(int64_t &value);
+  [[nodiscard]] int64_t GetX() const;
+  [[nodiscard]] int64_t GetY() const;
   [[nodiscard]] long double Length() const;
+
+  Vector operator+() const;
+  Vector operator-() const;
+  Vector operator+(const Vector &vector) const;
+  Vector operator-(const Vector &vector) const;
+
+  friend Vector operator*(const Vector &vector, const int64_t &alpha);
+  friend Vector operator*(const int64_t &alpha, const Vector &vector);
+  friend Vector operator/(const Vector &vector, const int64_t &alpha);
+  friend Vector operator/(const int64_t &alpha, const Vector &vector);
+
+  Vector &operator+=(const Vector &vector);
+  Vector &operator-=(const Vector &vector);
+  Vector &operator*=(const int &alpha);
+  Vector &operator/=(const int &alpha);
+
+  bool operator==(const Vector &vector) const;
+  bool operator!=(const Vector &vector) const;
+
+  friend std::ostream &operator<<(std::ostream &out, const Vector &value);
+  friend std::istream &operator>>(std::istream &in, Vector &value);
 
  private:
   int64_t x_;
   int64_t y_;
 };
-
-Vector operator+(const Vector &vector);
-Vector operator-(const Vector &vector);
-Vector operator+(const Vector &vector1, const Vector &vector2);
-Vector operator-(const Vector &vector1, const Vector &vector2);
-
-Vector operator*(const Vector &vector, const int64_t &alpha);
-Vector operator*(const int64_t &alpha, const Vector &vector);
-Vector operator/(const Vector &vector, const int64_t &alpha);
-Vector operator/(const int64_t &alpha, const Vector &vector);
-
-Vector &operator+=(Vector &vector1, Vector &vector2);
-Vector &operator-=(Vector &vector1, Vector &vector2);
-Vector &operator*=(Vector &vector, int &alpha);
-Vector &operator/=(Vector &vector, int &alpha);
-
-bool operator==(const Vector &vector1, const Vector &vector2);
-bool operator!=(const Vector &vector1, const Vector &vector2);
 
 #endif // VECTOR_H
