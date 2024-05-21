@@ -2,11 +2,31 @@
 
 using Geometry::Vector;
 
-Geometry::Vector::Vector(): x_(0), y_(0) {}
+Geometry::Vector::Vector() {
+  x_ = 0;
+  y_ = 0;
+}
 
-Geometry::Vector::Vector(int64_t x, int64_t y) : x_(x), y_(y) {}
+Geometry::Vector::Vector(int64_t x, int64_t y) {
+  x_ = x;
+  y_ = y;
+}
 
-Geometry::Vector::Vector(const Vector &vec) : x_(vec.GetX()), y_(vec.GetY()){}
+Geometry::Vector::Vector(const Vector &vec){
+  x_ = vec.GetX();
+  y_ = vec.GetY();
+}
+
+Vector& Vector::operator=(const Vector& vec) = default;
+
+bool Geometry::Vector::operator==(const Vector &vector) const {
+  return (x_ == vector.GetX()) && (y_ == vector.GetY());
+}
+
+bool Geometry::Vector::operator!=(const Vector &vector) const {
+  return !(*this == vector);
+}
+
 
 int64_t Geometry::Vector::GetX() const {
   return x_;
@@ -27,6 +47,15 @@ void Geometry::Vector::SetY(int64_t &value) {
 long double Geometry::Vector::Length() const {
   long double res = std::hypot(x_, y_);
   return res;
+}
+
+std::string Geometry::Vector::ToString() const {
+  std::string text = "Vector(";
+  text += std::to_string(x_);
+  text += ',';
+  text += std::to_string(y_);
+  text += ')';
+  return text;
 }
 
 Vector Geometry::Vector::operator+() const {
@@ -98,16 +127,8 @@ Vector &Geometry::Vector::operator/=(const int &alpha) {
   return *this;
 }
 
-bool Geometry::Vector::operator==(const Vector &vector) const {
-  return (x_ == vector.GetX()) && (y_ == vector.GetY());
-}
-
-bool Geometry::Vector::operator!=(const Vector &vector) const {
-  return !(*this == vector);
-}
-
 std::ostream &Geometry::operator<<(std::ostream &out, const Vector &value) {
-  out << "Vector(" << value.GetX() << ',' << value.GetY() << ')';
+  out << value.ToString();
   return out;
 }
 
