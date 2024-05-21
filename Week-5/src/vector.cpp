@@ -1,27 +1,43 @@
 #include "../vector.h"
 
-Vector::Vector() : orientation_(0, 0) {}
+Vector::Vector() : x_(0), y_(0) {}
 
-Vector::Vector(int x, int y) : orientation_(x, y) {}
+Vector::Vector(int64_t x, int64_t y) : x_(x), y_(y) {}
 
-Point Vector::GetOrientation() const {
-  return orientation_;
+Vector::Vector(const Vector &vec) : x_(vec.GetX()), y_(vec.GetY()) {}
+
+int64_t Vector::GetX() const {
+  return x_;
 }
 
-void Vector::SetOrientation(const Point &value) {
-  orientation_ = value;
+int64_t Vector::GetY() const {
+  return y_;
+}
+
+void Vector::SetX(int64_t &value) {
+  x_ = value;
+}
+
+void Vector::SetY(int64_t &value) {
+  y_ = value;
+}
+
+long double Vector::Length() const {
+  long double res = std::hypot(x_, y_);
+  return res;
 }
 
 std::ostream &operator<<(std::ostream &out, const Vector &value) {
-  out << "Vector(" << value.GetOrientation().GetX() << ',' << value.GetOrientation().GetY() << ')';
+  out << "Vector(" << value.GetX() << ',' << value.GetY() << ')';
   return out;
 }
 
 std::istream &operator>>(std::istream &in, Vector &value) {
-  int x, y;
+  int64_t x, y;
   in >> x >> y;
   if (in) {
-    value.SetOrientation({x, y});
+    value.SetX(x);
+    value.SetY(y);
   }
   return in;
 }
@@ -31,14 +47,12 @@ Vector operator+(const Vector &vector) {
 }
 
 Vector operator-(const Vector &vector) {
-  Vector result = {-vector.GetOrientation().GetX(), -vector.GetOrientation().GetY()};
+  Vector result = {-vector.GetX(), -vector.GetY()};
   return result;
 }
 
 Vector operator+(const Vector &vector1, const Vector &vector2) {
-  Point p1 = vector1.GetOrientation();
-  Point p2 = vector2.GetOrientation();
-  Vector result = {p1.GetX() + p2.GetX(), p1.GetY() + p2.GetY()};
+  Vector result = {vector1.GetX() + vector2.GetX(), vector1.GetY() + vector2.GetY()};
   return result;
 }
 
@@ -48,14 +62,25 @@ Vector operator-(const Vector &vector1, const Vector &vector2) {
 }
 
 Vector operator*(const Vector &vector, const int &alpha) {
-  Vector result = {vector.GetOrientation().GetX() * alpha, vector.GetOrientation().GetY() * alpha};
+  Vector result = {vector.GetX() * alpha, vector.GetY() * alpha};
   return result;
 }
+
+Vector operator*(const int &alpha, const Vector &vector){
+  Vector result = vector * alpha;
+  return result;
+}
+
 Vector operator/(const Vector &vector, const int &alpha) {
   if (alpha == 0) {
     throw RationalDivisionByZero();
   }
   Vector result = {vector.GetOrientation().GetX() / alpha, vector.GetOrientation().GetY() / alpha};
+  return result;
+}
+
+Vector operator/(const int &alpha, const Vector &vector){
+  Vector result = vector / alpha;
   return result;
 }
 
@@ -84,7 +109,7 @@ Vector &operator/=(Vector &vector, int &alpha) {
 }
 
 bool operator==(const Vector &vector1, const Vector &vector2) {
-  return vector1.GetOrientation() == vector2.GetOrientation();
+  return (vector1.GetX() == vector2.GetX()) && (vector1.GetY() == vector2.GetY());
 }
 
 bool operator!=(const Vector &vector1, const Vector &vector2) {
