@@ -17,12 +17,12 @@ class Geometry::Point : public Geometry::IShape {
 
   void SetX(const int64_t &value);
   void SetY(const int64_t &value);
-  int64_t GetX() const;
-  int64_t GetY() const;
+  [[nodiscard]] int64_t GetX() const;
+  [[nodiscard]] int64_t GetY() const;
 
   [[nodiscard]] IShape &Move(const Geometry::Vector &vector) override;
   [[nodiscard]] bool ContainsPoint(const Geometry::Point &point) const override;
-  //[[nodiscard]] bool CrossesSegment(const Geometry::Segment &segment) const override;
+  [[nodiscard]] bool CrossesSegment(const Geometry::Segment &segment) const override;
   [[nodiscard]] IShape *Clone() const override;
   [[nodiscard]] std::string ToString() const override;
 

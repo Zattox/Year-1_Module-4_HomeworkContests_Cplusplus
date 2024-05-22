@@ -1,5 +1,5 @@
 #include "../vector.h"
-#include <iostream>
+
 using namespace Geometry;
 
 Vector::Vector() : x_(0), y_(0) {}
