@@ -1,55 +1,43 @@
 #include "../vector.h"
+#include <iostream>
+using namespace Geometry;
 
-using Geometry::Vector;
+Vector::Vector() : x_(0), y_(0) {}
 
-Geometry::Vector::Vector() {
-  x_ = 0;
-  y_ = 0;
-}
+Vector::Vector(int64_t x, int64_t y) : x_(x), y_(y) {}
 
-Geometry::Vector::Vector(int64_t x, int64_t y) {
-  x_ = x;
-  y_ = y;
-}
+Vector::Vector(const Vector &vec) : x_(vec.GetX()), y_(vec.GetY()) {}
 
-Geometry::Vector::Vector(const Vector &vec){
-  x_ = vec.GetX();
-  y_ = vec.GetY();
-}
-
-Vector& Vector::operator=(const Vector& vec) = default;
-
-bool Geometry::Vector::operator==(const Vector &vector) const {
+bool Vector::operator==(const Vector &vector) const {
   return (x_ == vector.GetX()) && (y_ == vector.GetY());
 }
 
-bool Geometry::Vector::operator!=(const Vector &vector) const {
+bool Vector::operator!=(const Vector &vector) const {
   return !(*this == vector);
 }
 
-
-int64_t Geometry::Vector::GetX() const {
+int64_t Vector::GetX() const {
   return x_;
 }
 
-int64_t Geometry::Vector::GetY() const {
+int64_t Vector::GetY() const {
   return y_;
 }
 
-void Geometry::Vector::SetX(int64_t &value) {
+void Vector::SetX(const int64_t &value) {
   x_ = value;
 }
 
-void Geometry::Vector::SetY(int64_t &value) {
+void Vector::SetY(const int64_t &value) {
   y_ = value;
 }
 
-long double Geometry::Vector::Length() const {
+long double Vector::Length() const {
   long double res = std::hypot(x_, y_);
   return res;
 }
 
-std::string Geometry::Vector::ToString() const {
+std::string Vector::ToString() const {
   std::string text = "Vector(";
   text += std::to_string(x_);
   text += ',';
@@ -58,36 +46,36 @@ std::string Geometry::Vector::ToString() const {
   return text;
 }
 
-Vector Geometry::Vector::operator+() const {
+Vector Vector::operator+() const {
   return *this;
 }
 
-Vector Geometry::Vector::operator-() const {
+Vector Vector::operator-() const {
   Vector result = {-x_, -y_};
   return result;
 }
 
-Vector Geometry::Vector::operator+(const Vector &vector) const {
+Vector Vector::operator+(const Vector &vector) const {
   Vector result = {x_ + vector.GetX(), y_ + vector.GetY()};
   return result;
 }
 
-Vector Geometry::Vector::operator-(const Vector &vector) const {
+Vector Vector::operator-(const Vector &vector) const {
   Vector result = {x_ - vector.GetX(), y_ - vector.GetY()};
   return result;
 }
 
-Vector Geometry::operator*(const Vector &vector, const int64_t &alpha) {
+Vector operator*(const Vector &vector, const int64_t &alpha) {
   Vector result = {vector.GetX() * alpha, vector.GetY() * alpha};
   return result;
 }
 
-Vector Geometry::operator*(const int64_t &alpha, const Vector &vector) {
-  Vector result = vector * alpha;
+Vector operator*(const int64_t &alpha, const Vector &vector) {
+  Vector result = {vector.GetX() * alpha, vector.GetY() * alpha};
   return result;
 }
 
-Vector Geometry::operator/(const Vector &vector, const int64_t &alpha) {
+Vector operator/(const Vector &vector, const int64_t &alpha) {
   if (alpha == 0) {
     throw RationalDivisionByZero();
   }
@@ -95,30 +83,25 @@ Vector Geometry::operator/(const Vector &vector, const int64_t &alpha) {
   return result;
 }
 
-Vector Geometry::operator/(const int64_t &alpha, const Vector &vector) {
-  Vector result = vector / alpha;
-  return result;
-}
-
-Vector &Geometry::Vector::operator+=(const Vector &vector) {
+Vector &Vector::operator+=(const Vector &vector) {
   x_ += vector.GetX();
   y_ += vector.GetY();
   return *this;
 }
 
-Vector &Geometry::Vector::operator-=(const Vector &vector) {
+Vector &Vector::operator-=(const Vector &vector) {
   x_ -= vector.GetX();
   y_ -= vector.GetY();
   return *this;
 }
 
-Vector &Geometry::Vector::operator*=(const int &alpha) {
+Vector &Vector::operator*=(const int &alpha) {
   x_ *= alpha;
   y_ *= alpha;
   return *this;
 }
 
-Vector &Geometry::Vector::operator/=(const int &alpha) {
+Vector &Vector::operator/=(const int &alpha) {
   if (alpha == 0) {
     throw RationalDivisionByZero();
   }
@@ -127,12 +110,12 @@ Vector &Geometry::Vector::operator/=(const int &alpha) {
   return *this;
 }
 
-std::ostream &Geometry::operator<<(std::ostream &out, const Vector &value) {
+std::ostream &operator<<(std::ostream &out, const Vector &value) {
   out << value.ToString();
   return out;
 }
 
-std::istream &Geometry::operator>>(std::istream &in, Vector &value) {
+std::istream &operator>>(std::istream &in, Vector &value) {
   int64_t first_num, second_num;
   in >> first_num >> second_num;
   if (in) {
@@ -140,4 +123,9 @@ std::istream &Geometry::operator>>(std::istream &in, Vector &value) {
     value.SetY(second_num);
   }
   return in;
+}
+
+int main() {
+  std::cout << "yra";
+  return 0;
 }
