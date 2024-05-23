@@ -3,11 +3,14 @@
 
 namespace geometry {
 
-Line::Line() : start_(Point()), end_(Point()) {}
+Line::Line() : start_(Point()), end_(Point()) {
+}
 
-Line::Line(const Point &start, const Point &end) : start_(start), end_(end) {}
+Line::Line(const Point &start, const Point &end) : start_(start), end_(end) {
+}
 
-Line::Line(const Line &line) : start_(line.GetStart()), end_(line.GetEnd()) {}
+Line::Line(const Line &line) : start_(line.GetStart()), end_(line.GetEnd()) {
+}
 
 void Line::SetStart(const Point &point) {
   start_ = point;
@@ -59,7 +62,6 @@ bool Line::ContainsPoint(const Point &point) const {
   return CrossProduct(start - pt, end - pt) == 0;
 }
 
-// Не уверен что работает
 bool Line::CrossesSegment(const Segment &segment) const {
   Vector direction = end_ - start_;
 
@@ -78,8 +80,8 @@ bool Line::CrossesSegment(const Segment &segment) const {
     delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
   }
 
-  int64_t maxi_plus = _abs64(*std::max_element(delta.begin(), delta.end()));
-  int64_t maxi_minus = _abs64(*std::min_element(delta.begin(), delta.end()));
+  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end()));
+  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end()));
 
   Vector start(start_.GetX(), start_.GetY());
   Vector end(end_.GetX(), end_.GetY());
@@ -110,4 +112,4 @@ std::ostream &operator<<(std::ostream &out, const Line &value) {
   return out;
 }
 
-}
+}  // namespace geometry

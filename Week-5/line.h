@@ -35,6 +35,6 @@ class Line : public IShape {
   Point end_;
 };
 
-}
+}  // namespace geometry
 
-#endif // LINE_H
+#endif  // LINE_H

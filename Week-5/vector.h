@@ -49,6 +49,6 @@ class Vector {
 int64_t DotProduct(const Vector &v1, const Vector &v2);
 int64_t CrossProduct(const Vector &v1, const Vector &v2);
 
-}
+}  // namespace geometry
 
-#endif // VECTOR_H
+#endif  // VECTOR_H

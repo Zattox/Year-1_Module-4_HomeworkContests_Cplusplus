@@ -2,11 +2,14 @@
 
 namespace geometry {
 
-Circle::Circle() : centre_(Point()), radius_(0) {}
+Circle::Circle() : centre_(Point()), radius_(0) {
+}
 
-Circle::Circle(const Point &centre, const int64_t &radius) : centre_(centre), radius_(radius) {}
+Circle::Circle(const Point &centre, const int64_t &radius) : centre_(centre), radius_(radius) {
+}
 
-Circle::Circle(const Circle &circle) : centre_(circle.GetCentre()), radius_(circle.GetRadius()) {}
+Circle::Circle(const Circle &circle) : centre_(circle.GetCentre()), radius_(circle.GetRadius()) {
+}
 
 void Circle::SetCentre(const Point &point) {
   centre_ = point;
@@ -63,4 +66,4 @@ std::ostream &operator<<(std::ostream &out, const Circle &value) {
   return out;
 }
 
-}
+}  // namespace geometry

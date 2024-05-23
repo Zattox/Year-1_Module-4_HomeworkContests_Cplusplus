@@ -3,11 +3,14 @@
 
 namespace geometry {
 
-Polygon::Polygon() : points_(std::vector<Point>(0)), size_(0) {}
+Polygon::Polygon() : points_(std::vector<Point>(0)), size_(0) {
+}
 
-Polygon::Polygon(const std::vector<Point> &arr) : points_(arr), size_(arr.size()){}
+Polygon::Polygon(const std::vector<Point> &arr) : points_(arr), size_(arr.size()) {
+}
 
-Polygon::Polygon(const Polygon &polygon) : points_(polygon.GetPoints()), size_(polygon.GetSize()){}
+Polygon::Polygon(const Polygon &polygon) : points_(polygon.GetPoints()), size_(polygon.GetSize()) {
+}
 
 void Polygon::SetPoints(const std::vector<Point> &arr) {
   points_ = arr;
@@ -31,7 +34,7 @@ IShape &Polygon::Move(const Vector &vector) {
 }
 
 bool Polygon::ContainsPoint(const Point &point) const {
-  for (int i = 0; i < size_; ++i) {
+  for (size_t i = 0; i < size_; ++i) {
     Segment segment = {points_[i], points_[(i + 1) % size_]};
     if (segment.ContainsPoint(point)) {
       return true;
@@ -39,7 +42,7 @@ bool Polygon::ContainsPoint(const Point &point) const {
   }
 
   long double sum = 0;
-  for (int i = 0; i < size_; ++i) {
+  for (size_t i = 0; i < size_; ++i) {
     sum += Angle(points_[i] - point, points_[(i + 1) % size_] - point);
   }
 
@@ -51,7 +54,7 @@ bool Polygon::ContainsPoint(const Point &point) const {
 }
 
 bool Polygon::CrossesSegment(const Segment &segment) const {
-  for (int i = 0; i < size_; ++i) {
+  for (size_t i = 0; i < size_; ++i) {
     Segment edge = {points_[i], points_[(i + 1) % size_]};
     if (segment.CrossesSegment(edge)) {
       return true;
@@ -82,8 +85,8 @@ std::ostream &operator<<(std::ostream &out, const Polygon &value) {
   return out;
 }
 
-long double Angle(const Vector& point1, const Vector& point2) {
+long double Angle(const Vector &point1, const Vector &point2) {
   return atan2l(CrossProduct(point1, point2), DotProduct(point1, point2));
 }
 
-}
+}  // namespace geometry

@@ -21,6 +21,6 @@ class IShape {
   virtual ~IShape() = default;
 };
 
-}
+}  // namespace geometry
 
-#endif // ISHAPE_H
+#endif  // ISHAPE_H

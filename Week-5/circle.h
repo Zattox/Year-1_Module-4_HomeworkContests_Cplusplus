@@ -32,6 +32,6 @@ class Circle : public IShape {
   int64_t radius_;
 };
 
-}
+}  // namespace geometry
 
-#endif // CIRCLE_H
+#endif  // CIRCLE_H

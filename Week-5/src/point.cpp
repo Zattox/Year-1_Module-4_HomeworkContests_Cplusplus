@@ -3,13 +3,17 @@
 
 namespace geometry {
 
-Point::Point() : x_(0), y_(0) {}
+Point::Point() : x_(0), y_(0) {
+}
 
-Point::Point(int64_t x, int64_t y) : x_(x), y_(y) {}
+Point::Point(int64_t x, int64_t y) : x_(x), y_(y) {
+}
 
-Point::Point(const Point &point) : x_(point.GetX()), y_(point.GetY()) {}
+Point::Point(const Point &point) : x_(point.GetX()), y_(point.GetY()) {
+}
 
-Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetX()) {}
+Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetX()) {
+}
 
 bool Point::operator==(const Point &point) const {
   return (x_ == point.GetX()) && (y_ == point.GetY());
@@ -83,4 +87,4 @@ std::istream &operator>>(std::istream &in, Point &value) {
   return in;
 }
 
-}
+}  // namespace geometry

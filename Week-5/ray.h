@@ -35,6 +35,6 @@ class Ray : public IShape {
   Vector direction_;
 };
 
-}
+}  // namespace geometry
 
-#endif // RAY_H
+#endif  // RAY_H

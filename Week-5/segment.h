@@ -36,6 +36,6 @@ class Segment : public IShape {
 
 bool CheckParallelism(int64_t a, int64_t b, int64_t c, int64_t d);
 
-}
+}  // namespace geometry
 
-#endif // SEGMENT_H
+#endif  // SEGMENT_H

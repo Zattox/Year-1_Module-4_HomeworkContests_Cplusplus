@@ -7,7 +7,7 @@
 #include "segment.h"
 #include "ray.h"
 #include "line.h"
-//#include "circle.h"
+#include "circle.h"
 #include "polygon.h"
 
 #include "vector.h"   // check include guards
@@ -15,7 +15,7 @@
 #include "segment.h"  // check include guards
 #include "ray.h"      // check include guards
 #include "line.h"     // check include guards
-//#include "circle.h"   // check include guards
+#include "circle.h"   // check include guards
 #include "polygon.h"  // check include guards
 
 template<class SmartPtrT>
@@ -74,13 +74,13 @@ int main() {
       points.emplace_back(x, y);
     }
     shape_ptr = std::make_unique<geometry::Polygon>(std::move(points));
-  } /* else if (command == "circle") {
+  } else if (command == "circle") {
     std::cin >> x >> y;
     const auto center = geometry::Point(x, y);
     uint32_t radius = 0;
     std::cin >> radius;
     shape_ptr = std::make_unique<geometry::Circle>(center, radius);
-  } */ else {
+  } else {
     std::cerr << "Undefined command" << std::endl;
     return 1;
   }

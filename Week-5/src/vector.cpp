@@ -2,11 +2,14 @@
 
 namespace geometry {
 
-Vector::Vector() : x_(0), y_(0) {}
+Vector::Vector() : x_(0), y_(0) {
+}
 
-Vector::Vector(int64_t x, int64_t y) : x_(x), y_(y) {}
+Vector::Vector(int64_t x, int64_t y) : x_(x), y_(y) {
+}
 
-Vector::Vector(const Vector &vec) : x_(vec.GetX()), y_(vec.GetY()) {}
+Vector::Vector(const Vector &vec) : x_(vec.GetX()), y_(vec.GetY()) {
+}
 
 bool Vector::operator==(const Vector &vector) const {
   return (x_ == vector.GetX()) && (y_ == vector.GetY());
@@ -133,4 +136,4 @@ int64_t CrossProduct(const Vector &v1, const Vector &v2) {
   return v1.GetX() * v2.GetY() - v1.GetY() * v2.GetX();
 }
 
-}
+}  // namespace geometry

@@ -36,6 +36,6 @@ class Point : public IShape {
   int64_t y_;
 };
 
-}
+}  // namespace geometry
 
-#endif // POINT_H
+#endif  // POINT_H

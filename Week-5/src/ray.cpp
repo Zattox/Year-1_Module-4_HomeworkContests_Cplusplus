@@ -5,16 +5,19 @@
 
 namespace geometry {
 
-Ray::Ray() : start_(Point()), end_(Point()), direction_(Vector()) {}
+Ray::Ray() : start_(Point()), end_(Point()), direction_(Vector()) {
+}
 
 Ray::Ray(const Point &start, const Vector &direction) : start_(start), direction_(direction) {
   end_.SetX(start_.GetX() + direction_.GetX());
   end_.SetY(start_.GetY() + direction_.GetY());
 }
 
-Ray::Ray(const Point &start, const Point &end) : start_(start), end_(end), direction_(end - start) {}
+Ray::Ray(const Point &start, const Point &end) : start_(start), end_(end), direction_(end - start) {
+}
 
-Ray::Ray(const Ray &ray) : start_(ray.GetStart()), end_(ray.GetEnd()), direction_(ray.GetDirection()) {}
+Ray::Ray(const Ray &ray) : start_(ray.GetStart()), end_(ray.GetEnd()), direction_(ray.GetDirection()) {
+}
 
 void Ray::SetStart(const Point &point) {
   start_ = point;
@@ -57,11 +60,9 @@ bool Ray::ContainsPoint(const Point &point) const {
   Vector start(start_.GetX(), start_.GetY());
   Vector end(end_.GetX(), end_.GetY());
   Vector pt(point.GetX(), point.GetY());
-  return CrossProduct(end - start, start - pt) == 0
-      && DotProduct(end - start, start - pt) <= 0;
+  return (CrossProduct(end - start, start - pt) == 0) && (DotProduct(end - start, start - pt) <= 0);
 }
 
-// Не уверен что работает
 bool Ray::CrossesSegment(const Segment &segment) const {
   std::vector<int64_t> delta(4, 0);
   if (direction_.GetX() != 0) {
@@ -73,8 +74,8 @@ bool Ray::CrossesSegment(const Segment &segment) const {
     delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction_.GetY() + 1;
   }
 
-  int64_t maxi_plus = _abs64(*std::max_element(delta.begin(), delta.end()));
-  int64_t maxi_minus = _abs64(*std::min_element(delta.begin(), delta.end()));
+  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end()));
+  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end()));
 
   Vector start(start_.GetX(), start_.GetY());
   Vector end(end_.GetX(), end_.GetY());
@@ -102,4 +103,4 @@ std::ostream &operator<<(std::ostream &out, const Ray &value) {
   return out;
 }
 
-}
+}  // namespace geometry

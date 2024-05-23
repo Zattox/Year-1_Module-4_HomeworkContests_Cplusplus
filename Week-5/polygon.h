@@ -11,7 +11,7 @@ namespace geometry {
 class Polygon : public IShape {
  public:
   Polygon();
-  Polygon(const std::vector<Point> &arr);
+  explicit Polygon(const std::vector<Point> &arr);
   Polygon(const Polygon &polygon);
 
   void SetPoints(const std::vector<Point> &arr);
@@ -31,8 +31,8 @@ class Polygon : public IShape {
   size_t size_;
 };
 
-long double Angle(const Vector& point1, const Vector& point2);
+long double Angle(const Vector &point1, const Vector &point2);
 
-}
+}  // namespace geometry
 
-#endif // POLYGON_H
+#endif  // POLYGON_H
