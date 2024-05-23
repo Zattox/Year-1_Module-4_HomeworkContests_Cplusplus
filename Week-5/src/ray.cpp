@@ -66,22 +66,20 @@ bool Ray::ContainsPoint(const Point &point) const {
 bool Ray::CrossesSegment(const Segment &segment) const {
   std::vector<int64_t> delta(4, 0);
   if (direction_.GetX() != 0) {
-    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction_.GetX() + 1;
-    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction_.GetX() + 1;
+    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction_.GetX();
+    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction_.GetX();
   }
   if (direction_.GetY() != 0) {
-    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction_.GetY() + 1;
-    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction_.GetY() + 1;
+    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction_.GetY();
+    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction_.GetY();
   }
 
-  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end()));
-  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end()));
+  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end())) + 1;
 
   Vector start(start_.GetX(), start_.GetY());
-  Vector end(end_.GetX(), end_.GetY());
-  Segment lineSegment = {Point(start + maxi_plus * direction_), Point(end + maxi_minus * direction_)};
+  Segment lineSegment = {Point(start), Point(start + maxi_plus * direction_)};
 
-  return segment.CrossesSegment(lineSegment);
+  return lineSegment.CrossesSegment(segment);
 }
 
 IShape *Ray::Clone() const {

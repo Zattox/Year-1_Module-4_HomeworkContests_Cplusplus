@@ -12,7 +12,7 @@ Point::Point(int64_t x, int64_t y) : x_(x), y_(y) {
 Point::Point(const Point &point) : x_(point.GetX()), y_(point.GetY()) {
 }
 
-Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetX()) {
+Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetY()) {
 }
 
 bool Point::operator==(const Point &point) const {

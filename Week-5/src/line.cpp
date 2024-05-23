@@ -68,20 +68,20 @@ bool Line::CrossesSegment(const Segment &segment) const {
   std::vector<int64_t> delta(8, 0);
 
   if (direction.GetX() != 0) {
-    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
-    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
-    delta[4] = (end_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
-    delta[5] = (end_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
+    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction.GetX();
+    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction.GetX();
+    delta[4] = (end_.GetX() - segment.GetStart().GetX()) / direction.GetX();
+    delta[5] = (end_.GetX() - segment.GetEnd().GetX()) / direction.GetX();
   }
   if (direction.GetY() != 0) {
-    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
-    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
-    delta[6] = (end_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
-    delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
+    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction.GetY();
+    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction.GetY();
+    delta[6] = (end_.GetY() - segment.GetStart().GetY()) / direction.GetY();
+    delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY();
   }
 
-  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end()));
-  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end()));
+  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end())) + 1;
+  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end())) - 1;
 
   Vector start(start_.GetX(), start_.GetY());
   Vector end(end_.GetX(), end_.GetY());
