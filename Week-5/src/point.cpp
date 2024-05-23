@@ -62,7 +62,7 @@ IShape *Point::Clone() const {
 std::string Point::ToString() const {
   std::string text = "Point(";
   text += std::to_string(x_);
-  text += ',';
+  text += ", ";
   text += std::to_string(y_);
   text += ')';
   return text;

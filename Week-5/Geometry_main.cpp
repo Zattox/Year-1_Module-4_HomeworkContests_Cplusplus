@@ -7,7 +7,7 @@
 #include "segment.h"
 #include "ray.h"
 #include "line.h"
-#include "circle.h"
+//#include "circle.h"
 #include "polygon.h"
 
 #include "vector.h"   // check include guards
@@ -15,19 +15,19 @@
 #include "segment.h"  // check include guards
 #include "ray.h"      // check include guards
 #include "line.h"     // check include guards
-#include "circle.h"   // check include guards
+//#include "circle.h"   // check include guards
 #include "polygon.h"  // check include guards
 
-template <class SmartPtrT>
-void Delete(const SmartPtrT&) {
+template<class SmartPtrT>
+void Delete(const SmartPtrT &) {
 }
 
-template <class T>
-void Delete(T* ptr) {
+template<class T>
+void Delete(T *ptr) {
   delete ptr;
 }
 
-void CheckFunctions(const geometry::IShape* shape_ptr, const geometry::Point& point_a, const geometry::Point& point_b) {
+void CheckFunctions(const geometry::IShape *shape_ptr, const geometry::Point &point_a, const geometry::Point &point_b) {
   std::cout << "Given shape " << (shape_ptr->ContainsPoint(point_a) ? "contains" : "does not contain") << " point A\n";
 
   const auto segment_ab = geometry::Segment(point_a, point_b);
@@ -74,13 +74,13 @@ int main() {
       points.emplace_back(x, y);
     }
     shape_ptr = std::make_unique<geometry::Polygon>(std::move(points));
-  } else if (command == "circle") {
+  } /* else if (command == "circle") {
     std::cin >> x >> y;
     const auto center = geometry::Point(x, y);
     uint32_t radius = 0;
     std::cin >> radius;
     shape_ptr = std::make_unique<geometry::Circle>(center, radius);
-  } else {
+  } */ else {
     std::cerr << "Undefined command" << std::endl;
     return 1;
   }

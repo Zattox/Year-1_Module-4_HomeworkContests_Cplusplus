@@ -88,7 +88,7 @@ IShape *Ray::Clone() const {
 std::string Ray::ToString() const {
   std::string text = "Ray(";
   text += start_.ToString();
-  text += ',';
+  text += ", ";
   text += direction_.ToString();
   text += ')';
   return text;

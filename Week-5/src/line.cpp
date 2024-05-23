@@ -94,9 +94,9 @@ IShape *Line::Clone() const {
 std::string Line::ToString() const {
   std::string text = "Line(";
   text += std::to_string(GetA());
-  text += ',';
+  text += ", ";
   text += std::to_string(GetB());
-  text += ',';
+  text += ", ";
   text += std::to_string(GetC());
   text += ')';
   return text;

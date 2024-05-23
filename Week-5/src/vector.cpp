@@ -40,7 +40,7 @@ long double Vector::Length() const {
 std::string Vector::ToString() const {
   std::string text = "Vector(";
   text += std::to_string(x_);
-  text += ',';
+  text += ", ";
   text += std::to_string(y_);
   text += ')';
   return text;

@@ -69,8 +69,9 @@ std::string Polygon::ToString() const {
   std::string text = "Polygon(";
   for (auto &el : points_) {
     text += el.ToString();
-    text += ',';
+    text += ", ";
   }
+  text.pop_back();
   text.pop_back();
   text += ')';
   return text;

@@ -72,7 +72,7 @@ IShape *Segment::Clone() const {
 std::string Segment::ToString() const {
   std::string text = "Segment(";
   text += start_.ToString();
-  text += ',';
+  text += ", ";
   text += end_.ToString();
   text += ')';
   return text;
