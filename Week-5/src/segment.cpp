@@ -1,5 +1,4 @@
 #include "../segment.h"
-#include "../vector.h"
 
 namespace geometry {
 

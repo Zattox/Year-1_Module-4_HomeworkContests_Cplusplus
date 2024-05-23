@@ -9,14 +9,6 @@ Line::Line(const Point &start, const Point &end) : start_(start), end_(end) {}
 
 Line::Line(const Line &line) : start_(line.GetStart()), end_(line.GetEnd()) {}
 
-bool Line::operator==(const Line &line) const {
-  return (start_ == line.GetStart() && end_ == line.GetEnd());
-}
-
-bool Line::operator!=(const Line &line) const {
-  return !(*this == line);
-}
-
 void Line::SetStart(const Point &point) {
   start_ = point;
 }
@@ -68,7 +60,7 @@ bool Line::ContainsPoint(const Point &point) const {
   return CrossProduct(start - pt, end - pt) == 0;
 }
 
-// Не уверен в этом
+// Не уверен что работает
 bool Line::CrossesSegment(const Segment &segment) const {
   Vector direction = end_ - start_;
 

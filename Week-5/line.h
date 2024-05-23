@@ -14,9 +14,6 @@ class Line : public IShape {
   Line(const Point &start, const Point &end);
   Line(const Line &line);
 
-  bool operator==(const Line &line) const;
-  bool operator!=(const Line &line) const;
-
   void SetStart(const Point &point);
   void SetEnd(const Point &point);
   [[nodiscard]] Point GetStart() const;
