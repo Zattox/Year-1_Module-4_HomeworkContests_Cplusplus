@@ -80,15 +80,20 @@ bool Line::CrossesSegment(const Segment &segment) const {
     delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY();
   }
 
-  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end())) + 1;
-  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end())) - 1;
+  int64_t maxi_plus = llabs(*std::max_element(delta.begin(), delta.end()) + 1);
+  int64_t maxi_minus = llabs(*std::min_element(delta.begin(), delta.end()) - 1);
 
   Vector start(start_.GetX(), start_.GetY());
   Vector end(end_.GetX(), end_.GetY());
   Segment lineSegment1 = {Point(start - maxi_minus * direction), Point(end + maxi_plus * direction)};
   Segment lineSegment2 = {Point(start + maxi_plus * direction), Point(end - maxi_minus * direction)};
+  Segment lineSegment3 = {Point(start + maxi_minus * direction), Point(end - maxi_plus * direction)};
+  Segment lineSegment4 = {Point(start - maxi_plus * direction), Point(end + maxi_minus * direction)};
 
-  return segment.CrossesSegment(lineSegment1) || segment.CrossesSegment(lineSegment2);
+  bool flag1 = (segment.CrossesSegment(lineSegment1) || segment.CrossesSegment(lineSegment2));
+  bool flag2 = (segment.CrossesSegment(lineSegment3) || segment.CrossesSegment(lineSegment4));
+
+  return flag1 || flag2;
 }
 
 IShape *Line::Clone() const {
