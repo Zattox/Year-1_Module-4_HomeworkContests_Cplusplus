@@ -50,7 +50,6 @@ IShape &Ray::Move(const Vector &vector) {
   start_.SetY(start_.GetY() + vector.GetY());
   end_.SetX(end_.GetX() + vector.GetX());
   end_.SetY(end_.GetY() + vector.GetY());
-  direction_ += vector;
   return *this;
 }
 
