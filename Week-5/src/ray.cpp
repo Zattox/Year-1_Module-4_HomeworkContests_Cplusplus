@@ -63,11 +63,15 @@ bool Ray::ContainsPoint(const Point &point) const {
 
 // Не уверен что работает
 bool Ray::CrossesSegment(const Segment &segment) const {
-  std::vector<int64_t> delta(4);
-  delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction_.GetX() + 1;
-  delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction_.GetX() + 1;
-  delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction_.GetY() + 1;
-  delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction_.GetY() + 1;
+  std::vector<int64_t> delta(4, 0);
+  if (direction_.GetX() != 0) {
+    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction_.GetX() + 1;
+    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction_.GetX() + 1;
+  }
+  if (direction_.GetY() != 0) {
+    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction_.GetY() + 1;
+    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction_.GetY() + 1;
+  }
 
   int64_t maxi_plus = _abs64(*std::max_element(delta.begin(), delta.end()));
   int64_t maxi_minus = _abs64(*std::min_element(delta.begin(), delta.end()));

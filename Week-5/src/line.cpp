@@ -64,16 +64,20 @@ bool Line::ContainsPoint(const Point &point) const {
 bool Line::CrossesSegment(const Segment &segment) const {
   Vector direction = end_ - start_;
 
-  std::vector<int64_t> delta(8);
-  delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
-  delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
-  delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
-  delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
+  std::vector<int64_t> delta(8, 0);
 
-  delta[4] = (end_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
-  delta[5] = (end_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
-  delta[6] = (end_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
-  delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
+  if (direction.GetX() != 0) {
+    delta[0] = (start_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
+    delta[1] = (start_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
+    delta[4] = (end_.GetX() - segment.GetStart().GetX()) / direction.GetX() + 1;
+    delta[5] = (end_.GetX() - segment.GetEnd().GetX()) / direction.GetX() + 1;
+  }
+  if (direction.GetY() != 0) {
+    delta[2] = (start_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
+    delta[3] = (start_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
+    delta[6] = (end_.GetY() - segment.GetStart().GetY()) / direction.GetY() + 1;
+    delta[7] = (end_.GetY() - segment.GetEnd().GetY()) / direction.GetY() + 1;
+  }
 
   int64_t maxi_plus = _abs64(*std::max_element(delta.begin(), delta.end()));
   int64_t maxi_minus = _abs64(*std::min_element(delta.begin(), delta.end()));
