@@ -5,9 +5,9 @@
 #include "point.h"
 #include "vector.h"
 
-using namespace Geometry;
+namespace geometry {
 
-class Geometry::Segment : public Geometry::IShape {
+class Segment : public IShape {
  public:
   Segment();
   Segment(const Point &start, const Point &end);
@@ -22,8 +22,8 @@ class Geometry::Segment : public Geometry::IShape {
   [[nodiscard]] Point GetEnd() const;
 
   [[nodiscard]] IShape &Move(const Vector &vector) override;
-  [[nodiscard]] bool ContainsPoint(const Geometry::Point &point) const override;
-  [[nodiscard]] bool CrossesSegment(const Geometry::Segment &segment) const override;
+  [[nodiscard]] bool ContainsPoint(const Point &point) const override;
+  [[nodiscard]] bool CrossesSegment(const Segment &segment) const override;
   [[nodiscard]] IShape *Clone() const override;
   [[nodiscard]] std::string ToString() const override;
 
@@ -33,5 +33,9 @@ class Geometry::Segment : public Geometry::IShape {
   Point start_;
   Point end_;
 };
+
+bool CheckParallelism(int64_t a, int64_t b, int64_t c, int64_t d);
+
+}
 
 #endif // SEGMENT_H
