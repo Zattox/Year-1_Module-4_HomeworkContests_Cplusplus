@@ -1,7 +1,8 @@
 #include "../point.h"
-#include "vector.cpp"
+#include "../segment.h"
+#include "../vector.h"
 
-using namespace Geometry;
+namespace geometry {
 
 Point::Point() : x_(0), y_(0) {}
 
@@ -9,7 +10,7 @@ Point::Point(int64_t x, int64_t y) : x_(x), y_(y) {}
 
 Point::Point(const Point &point) : x_(point.GetX()), y_(point.GetY()) {}
 
-Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetX()){}
+Point::Point(const Vector &vector) : x_(vector.GetX()), y_(vector.GetX()) {}
 
 bool Point::operator==(const Point &point) const {
   return (x_ == point.GetX()) && (y_ == point.GetY());
@@ -17,6 +18,11 @@ bool Point::operator==(const Point &point) const {
 
 bool Point::operator!=(const Point &vector) const {
   return !(*this == vector);
+}
+
+Vector Point::operator-(const Point &point) const {
+  Vector result = {x_ - point.GetX(), y_ - point.GetY()};
+  return result;
 }
 
 void Point::SetX(const int64_t &value) {
@@ -35,7 +41,7 @@ int64_t Point::GetY() const {
   return y_;
 }
 
-IShape &Geometry::Point::Move(const Vector &vector) {
+IShape &Point::Move(const Vector &vector) {
   x_ += vector.GetX();
   y_ += vector.GetY();
   return *this;
@@ -45,9 +51,9 @@ bool Point::ContainsPoint(const Point &point) const {
   return point == *this;
 }
 
-/*bool Point::CrossesSegment(const Geometry::Segment &segment) const {
+bool Point::CrossesSegment(const Segment &segment) const {
   return segment.ContainsPoint(*this);
-}*/
+}
 
 IShape *Point::Clone() const {
   IShape *it = new Point(*this);
@@ -76,4 +82,6 @@ std::istream &operator>>(std::istream &in, Point &value) {
     value.SetY(second_num);
   }
   return in;
+}
+
 }

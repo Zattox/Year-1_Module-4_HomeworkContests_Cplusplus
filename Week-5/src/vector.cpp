@@ -1,6 +1,6 @@
 #include "../vector.h"
 
-using namespace Geometry;
+namespace geometry {
 
 Vector::Vector() : x_(0), y_(0) {}
 
@@ -77,7 +77,7 @@ Vector operator*(const int64_t &alpha, const Vector &vector) {
 
 Vector operator/(const Vector &vector, const int64_t &alpha) {
   if (alpha == 0) {
-    throw RationalDivisionByZero();
+    throw std::runtime_error("RationalDivisionByZero");
   }
   Vector result = {vector.GetX() / alpha, vector.GetY() / alpha};
   return result;
@@ -103,7 +103,7 @@ Vector &Vector::operator*=(const int &alpha) {
 
 Vector &Vector::operator/=(const int &alpha) {
   if (alpha == 0) {
-    throw RationalDivisionByZero();
+    throw std::runtime_error("RationalDivisionByZero");
   }
   x_ /= alpha;
   y_ /= alpha;
@@ -125,7 +125,12 @@ std::istream &operator>>(std::istream &in, Vector &value) {
   return in;
 }
 
-int main() {
-  std::cout << "yra";
-  return 0;
+int64_t DotProduct(const Vector &v1, const Vector &v2) {
+  return v1.GetX() * v2.GetX() + v1.GetY() * v2.GetY();
+}
+
+int64_t CrossProduct(const Vector &v1, const Vector &v2) {
+  return v1.GetX() * v2.GetY() - v1.GetY() * v2.GetX();
+}
+
 }

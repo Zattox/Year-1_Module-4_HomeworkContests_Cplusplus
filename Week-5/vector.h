@@ -1,11 +1,14 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "Geometry.h"
+#include <iostream>
+#include <cstdint>
+#include <cmath>
+#include <algorithm>
 
-using namespace Geometry;
+namespace geometry {
 
-class Geometry::Vector {
+class Vector {
  public:
   Vector();
   Vector(int64_t x, int64_t y);
@@ -20,7 +23,7 @@ class Geometry::Vector {
   [[nodiscard]] int64_t GetY() const;
   [[nodiscard]] long double Length() const;
   [[nodiscard]] std::string ToString() const;
-  
+
   Vector operator+() const;
   Vector operator-() const;
   Vector operator+(const Vector &vector) const;
@@ -42,5 +45,10 @@ class Geometry::Vector {
   int64_t x_;
   int64_t y_;
 };
+
+int64_t DotProduct(const Vector &v1, const Vector &v2);
+int64_t CrossProduct(const Vector &v1, const Vector &v2);
+
+}
 
 #endif // VECTOR_H
