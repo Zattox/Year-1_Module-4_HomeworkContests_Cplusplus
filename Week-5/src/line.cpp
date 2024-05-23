@@ -40,9 +40,8 @@ int64_t Line::GetB() const {
 }
 
 int64_t Line::GetC() const {
-  Vector start(start_.GetX(), start_.GetY());
-  Vector end(end_.GetX(), end_.GetY());
-  return CrossProduct(start, end);
+  int64_t result = start_.GetY() * end_.GetX() - start_.GetX() * end_.GetY();
+  return result;
 }
 
 IShape &Line::Move(const Vector &vector) {
