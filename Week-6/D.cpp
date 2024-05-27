@@ -19,7 +19,7 @@ int main() {
   for (int i = 0; i < m; ++i) {
     int number;
     cin >> number;
-    int count = std::upper_bound(arr.begin(), arr.end(), number) - std::lower_bound(arr.begin(), arr.end(), number);
+    auto count = std::upper_bound(arr.begin(), arr.end(), number) - std::lower_bound(arr.begin(), arr.end(), number);
     cout << count << "\n";
   }
 

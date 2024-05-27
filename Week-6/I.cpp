@@ -1,25 +1,39 @@
 #include <iostream>
-#include <map>
+#include <vector>
+#include <algorithm>
+#include <unordered_map>
 
 using std::cin, std::cout;
+using std::vector, std::string, std::pair;
+using std::unordered_map;
+
+bool cmp(const pair<string, int> &p1, const pair<string, int> &p2) {
+  if (p1.second == p2.second) {
+    return p1.first < p2.first;
+  }
+  return p1.second > p2.second;
+}
 
 int main() {
   freopen("input.txt", "r", stdin);
   freopen("output.txt", "w", stdout);
 
-  std::map<std::string, int> mp;
-  std::string word;
-  int maxi = -1;
+  unordered_map<string, int> dict_cnt;
+  string word;
   while (cin >> word) {
-    mp[word]++;
-    maxi = std::max(maxi, mp[word]);
+    ++dict_cnt[word];
   }
 
-  for (auto &el : mp) {
-    if (el.second == maxi) {
-      cout << el.first;
-      break;
-    }
+  vector<pair<string, int>> dict_ans;
+  dict_ans.reserve(dict_cnt.size());
+  for (auto &el : dict_cnt) {
+    dict_ans.emplace_back(el);
   }
+
+  std::sort(dict_ans.begin(), dict_ans.end(), cmp);
+  for (auto &el : dict_ans) {
+    cout << el.first << "\n";
+  }
+
   return 0;
 }

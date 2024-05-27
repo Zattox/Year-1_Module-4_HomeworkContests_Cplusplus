@@ -1,8 +1,10 @@
 #include <iostream>
+#include <vector>
 
-using std::cin, std::cout;
+using namespace std;
 
 int main() {
 
+ 
   return 0;
 }

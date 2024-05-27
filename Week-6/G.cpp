@@ -1,27 +1,31 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 using std::cin, std::cout;
 using std::string;
 
 int main() {
-  int n;
+  std::ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+
+  int n = 0;
   cin >> n;
-  std::map<string, string> mp;
+  std::unordered_map<string, string> dict;
 
   for (int i = 0; i < n; ++i) {
-    string a, b;
-    cin >> a >> b;
-    mp[a] = b;
-    mp[b] = a;
+    string word;
+    string synonym;
+    cin >> word >> synonym;
+    dict[word] = synonym;
+    dict[synonym] = word;
   }
 
-  int q;
+  int q = 0;
   cin >> q;
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < q; ++i) {
     string question;
     cin >> question;
-    cout << mp[question] << '\n';
+    cout << dict[question] << '\n';
   }
 
   return 0;
