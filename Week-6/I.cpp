@@ -4,10 +4,9 @@
 #include <unordered_map>
 
 using std::cin, std::cout;
-using std::vector, std::string, std::pair;
-using std::unordered_map;
+using std::unordered_map, std::pair, std::string, std::vector;
 
-bool cmp(const pair<string, int> &p1, const pair<string, int> &p2) {
+bool Cmp(const pair<string, int> &p1, const pair<string, int> &p2) {
   if (p1.second == p2.second) {
     return p1.first < p2.first;
   }
@@ -30,7 +29,7 @@ int main() {
     dict_ans.emplace_back(el);
   }
 
-  std::sort(dict_ans.begin(), dict_ans.end(), cmp);
+  std::sort(dict_ans.begin(), dict_ans.end(), Cmp);
   for (auto &el : dict_ans) {
     cout << el.first << "\n";
   }

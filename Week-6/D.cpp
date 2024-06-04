@@ -1,26 +1,37 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <unordered_map>
 
 using std::cin, std::cout;
-using std::vector;
+using std::unordered_map, std::vector;
 
 int main() {
-  int n;
+  int n = 0;
   cin >> n;
-  vector<int> arr(n);
 
+  int counter = 0;
+  vector<int> count(n + 1);
+  unordered_map<int, int> cur(n);
   for (int i = 0; i < n; ++i) {
-    cin >> arr[i];
+    int x = 0;
+    cin >> x;
+    if (cur.find(x) == cur.end()) {
+      cur[x] = counter;
+      ++counter;
+    }
+    ++count[cur[x]];
   }
 
-  int m;
+  int m = 0;
   cin >> m;
   for (int i = 0; i < m; ++i) {
-    int number;
+    int number = 0;
     cin >> number;
-    auto count = std::upper_bound(arr.begin(), arr.end(), number) - std::lower_bound(arr.begin(), arr.end(), number);
-    cout << count << "\n";
+    if (cur.find(number) == cur.end()) {
+      cout << 0 << '\n';
+    } else {
+      cout << count[cur[number]] << '\n';
+    }
   }
 
   return 0;

@@ -1,22 +1,20 @@
 #include <iostream>
-#include <vector>
+#include <unordered_map>
 
 using std::cin, std::cout;
-using std::vector;
+using std::unordered_map;
 
 int main() {
-  const int max_num = 1001;
-
-  int n;
+  int n = 0;
   cin >> n;
-  vector<int> count(max_num);
+  unordered_map<int, int> count;
   for (int i = 0; i < n; ++i) {
-    int x;
+    int x = 0;
     cin >> x;
     ++count[x];
   }
 
-  int question;
+  int question = 0;
   cin >> question;
   cout << count[question];
 

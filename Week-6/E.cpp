@@ -1,17 +1,16 @@
 #include <iostream>
 #include <algorithm>
-#include <vector>
+#include <cstdint>
 
 using std::cin, std::cout;
-using std::vector, std::pair;
 
-struct row {
+struct Row {
   int ind = 0;
-  int tasks = 0;
+  int16_t tasks = 0;
   int penalty = 0;
 };
 
-bool cmp(const row &r1, const row &r2) {
+bool Cmp(const Row &r1, const Row &r2) {
   if (r1.tasks == r2.tasks) {
     if (r1.penalty == r2.penalty) {
       return r1.ind < r2.ind;
@@ -22,19 +21,20 @@ bool cmp(const row &r1, const row &r2) {
 }
 
 int main() {
-  int n;
+  const int max_n = 100000;
+  int n = 0;
   cin >> n;
-  vector<row> arr(n);
 
+  Row arr[max_n];
   for (int i = 0; i < n; ++i) {
     arr[i].ind = i + 1;
     cin >> arr[i].tasks >> arr[i].penalty;
   }
 
-  std::sort(arr.begin(), arr.end(), cmp);
+  std::sort(arr, arr + n, Cmp);
 
-  for (auto &el : arr) {
-    cout << el.ind << '\n';
+  for (int i = 0; i < n; ++i) {
+    cout << arr[i].ind << '\n';
   }
 
   return 0;

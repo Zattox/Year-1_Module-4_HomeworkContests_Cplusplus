@@ -1,20 +1,20 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 using std::cin, std::cout;
-using std::map, std::string;
+using std::unordered_map, std::string;
 
 int main() {
-  int n;
+  int n = 0;
   cin >> n;
 
-  map<string, int> bank;
+  unordered_map<string, int> bank;
   for (int i = 0; i < n; ++i) {
-    int command;
+    int command = 0;
     string name;
     cin >> command >> name;
     if (command == 1) {
-      int delta;
+      int delta = 0;
       cin >> delta;
       bank[name] += delta;
     } else {
