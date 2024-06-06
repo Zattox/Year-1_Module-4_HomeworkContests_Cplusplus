@@ -1,32 +1,35 @@
 #include <iostream>
-#include <queue>
+#include <unordered_map>
 
 using std::cin, std::cout;
+using std::string;
 
 int main() {
-  int n;
+  freopen("input.txt", "r", stdin);
+  freopen("output.txt", "w", stdout);
+  std::ios_base::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cout.tie(nullptr);
+
+  int n = 0;
+  std::unordered_map<string, string> dict;
   cin >> n;
-  std::priority_queue<int, std::vector<int>, std::greater<>> coins;
 
+  string word;
+  string synonym;
   for (int i = 0; i < n; ++i) {
-    int num;
-    cin >> num;
-    coins.push(num);
+    cin >> word >> synonym;
+    dict[word] = synonym;
+    dict[synonym] = word;
   }
 
-  double answer = 0;
-  while (coins.size() > 1) {
-    int first_num = coins.top();
-    coins.pop();
-    int second_num = coins.top();
-    coins.pop();
-    int result = first_num + second_num;
-    answer += result * 0.05;
-    coins.push(result);
+  int q = 0;
+  cin >> q;
+  string question;
+  for (int i = 0; i < q; ++i) {
+    cin >> question;
+    cout << dict[question] << '\n';
   }
-
-  cout.precision(10);
-  cout << std::fixed << answer;
 
   return 0;
 }
