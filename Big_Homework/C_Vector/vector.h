@@ -1,0 +1,8 @@
+//
+// Created by dumpl on 07.06.2024.
+//
+
+#ifndef BIG_HOMEWORK_C_VECTOR_VECTOR_H_
+#define BIG_HOMEWORK_C_VECTOR_VECTOR_H_
+
+#endif //BIG_HOMEWORK_C_VECTOR_VECTOR_H_
