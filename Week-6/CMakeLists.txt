@@ -3,7 +3,7 @@ project(Week_6)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(main main.cpp)
+add_executable(stress_K stress_K.cpp)
 add_executable(A A.cpp)
 add_executable(B B.cpp)
 add_executable(C C.cpp)
@@ -15,3 +15,4 @@ add_executable(H H.cpp)
 add_executable(I I.cpp)
 add_executable(J J.cpp)
 add_executable(K K.cpp)
+add_executable(TL_K TL_K.cpp)
