@@ -8,4 +8,8 @@
 
 [ЕДЗ 5](https://contest.yandex.ru/contest/62593/problems/)
 
-[ЕДЗ 6](https://contest.yandex.ru/contest/62761/problems/A/)
+[ЕДЗ 6](https://contest.yandex.ru/contest/62761/problems/)
+
+[EДЗ 7](https://contest.yandex.ru/contest/62944/problems/)
+
+[БДЗ](https://contest.yandex.ru/contest/62943/problems/)
