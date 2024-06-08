@@ -357,7 +357,7 @@ TEST_CASE("Determinant", "[MatrixMethods]") {
     REQUIRE(Determinant(matrix) == Rational{1, 3360});
   }
 }
-/*
+
 TEST_CASE("Inverse", "[MatrixMethods]") {
   {
     Matrix<Rational, 1, 1> matrix{3};
@@ -388,6 +388,7 @@ TEST_CASE("Inverse", "[MatrixMethods]") {
                                                                Rational{-40, 3}, Rational{640, 3}, Rational{-280},
                                                                Rational{9}, Rational{-180}, Rational{252}});
   }
+
 }
 
 TEST_CASE("GetInversed", "[MatrixMethods]") {
@@ -428,5 +429,6 @@ TEST_CASE("GetInversed", "[MatrixMethods]") {
     using ReturnType = std::remove_const_t<decltype(GetInversed(matrix))>;
     static_assert((std::is_same_v<ReturnType, Matrix<Rational, 3, 3>>));
   }
-}*/
+}
+
 #endif  // MATRIX_SQUARE_MATRIX_IMPLEMENTED

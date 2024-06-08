@@ -1,7 +1,7 @@
 #ifndef MATRIX
 #define MATRIX
 
-//#define MATRIX_SQUARE_MATRIX_IMPLEMENTED
+#define MATRIX_SQUARE_MATRIX_IMPLEMENTED
 #include <stdexcept>
 #include <iostream>
 #include <cstdint>
@@ -266,34 +266,37 @@ Matrix<T, Columns, Rows> GetTransposed(Matrix<T, Rows, Columns> matrix) {
   return transposed_matrix;
 }
 
-/*
 template<typename T, size_t N>
 void Transpose(Matrix<T, N, N> &matrix) {
-  for (int i = 0 ; i < N; ++i) {
-    for (int j = i + 1; j < N; ++j) {
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = i + 1; j < N; ++j) {
       std::swap(matrix.At(i, j), matrix.At(j, i));
     }
   }
 }
 
 template<typename T, size_t N>
-T Trace(const Matrix<T, N, N> &matrix)  {
+T Trace(const Matrix<T, N, N> &matrix) {
   T trace = 0;
-  for (int i = 0; i < N; ++i) {
+  for (size_t i = 0; i < N; ++i) {
     trace += matrix.At(i, i);
   }
   return trace;
 }
 
-template<typename T, uint64_t N>
-Matrix<T, N - 1, N - 1> GetMinor(Matrix<T, N, N> matrix, int deleted_row, int deleted_column) {
+template<typename T, size_t N>
+typename std::enable_if<(N > 1), Matrix<T, N - 1, N - 1>>::type GetMinor(const Matrix<T, N, N> &matrix,
+                                                                         size_t deleted_row,
+                                                                         size_t deleted_column) {
   Matrix<T, N - 1, N - 1> minor;
-  int i_minor = 0, j_minor = 0;
-  for (int i = 0; i < N; ++i) {
-    if (i_minor != deleted_row) {
-      for (int j = 0; j < N; ++j) {
-        if (j_minor != deleted_column) {
-          minor.At(i_minor, j_minor) = matrix(i, j);
+  size_t i_minor = 0;
+  for (size_t i = 0; i < N; ++i) {
+    if (i != deleted_row) {
+      size_t j_minor = 0;
+      for (size_t j = 0; j < N; ++j) {
+        if (j != deleted_column) {
+          minor.At(i_minor, j_minor) = matrix.At(i, j);
+          ++j_minor;
         }
       }
       ++i_minor;
@@ -302,43 +305,77 @@ Matrix<T, N - 1, N - 1> GetMinor(Matrix<T, N, N> matrix, int deleted_row, int de
   return minor;
 }
 
-template<typename T, uint64_t N>
-T Determinant(Matrix<T, N, N> matrix)  {
-  if (N < 1) {
-    throw std::runtime_error("The dimension is less than 1");
-  } else if (N == 1) {
-    return matrix.At(0, 0);
-  } else if (N == 2) {
-    return matrix.At(0, 0) * matrix.At(1, 1) - matrix.At(1, 0) * matrix.At(0, 1);
-  } else {
-    T determinant = 0;
-    T sign = -1;
-    for (int i = 0; i < N; ++i) {
-      if (N >= PTRDIFF_MAX) {
-        __builtin_unreachable ();
-      }
-      Matrix<T, N - 1, N - 1> minor = GetMinor(matrix, 0, i);
-      determinant += sign * Determinant(minor);
+template<typename T, size_t N>
+typename std::enable_if<N == 1, T>::type Determinant(const Matrix<T, N, N> &matrix) {
+  return matrix.At(0, 0);
+}
+
+template<typename T, size_t N>
+typename std::enable_if<N == 2, T>::type Determinant(const Matrix<T, N, N> &matrix) {
+  return matrix.At(0, 0) * matrix.At(1, 1) - matrix.At(0, 1) * matrix.At(1, 0);
+}
+
+template<typename T, size_t N>
+typename std::enable_if<(N > 2), T>::type Determinant(const Matrix<T, N, N> &matrix) {
+  T determinant = 0;
+  T sign = 1;
+  for (size_t j = 0; j < N; ++j) {
+    determinant += sign * matrix.At(0, j) * Determinant(GetMinor(matrix, 0, j));
+    sign = -sign;
+  }
+  return determinant;
+}
+
+template<typename T, size_t N>
+typename std::enable_if<(N > 1), Matrix<T, N, N>>::type GetAlgebraicAddition(const Matrix<T, N, N> &matrix) {
+  Matrix<T, N, N> algebraic_addition;
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = 0; j < N; ++j) {
+      T sign = std::pow(-1, i + j);
+      T det = Determinant(GetMinor(matrix, i, j));
+      algebraic_addition.At(i, j) = sign * det;
     }
-    return determinant;
+  }
+  return algebraic_addition;
+}
+
+template<typename T, size_t N>
+typename std::enable_if<(N == 1), Matrix<T, N, N>>::type GetInversed(const Matrix<T, N, N> &matrix) {
+  T det = Determinant(matrix);
+  if (det == 0) {
+    throw MatrixIsDegenerateError();
+  }
+  Matrix<T, N, N> inverse_matrix;
+  inverse_matrix.At(0, 0) = 1 / det;
+  return inverse_matrix;
+}
+
+template<typename T, size_t N>
+typename std::enable_if<(N > 1), Matrix<T, N, N>>::type GetInversed(const Matrix<T, N, N> &matrix) {
+  T det = Determinant(matrix);
+  if (det == 0) {
+    throw MatrixIsDegenerateError();
+  }
+
+  Matrix<T, N, N> inverse_matrix = GetAlgebraicAddition(matrix);
+  Transpose(inverse_matrix);
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = 0; j < N; ++j) {
+      inverse_matrix.At(i, j) /= det;
+    }
+  }
+
+  return inverse_matrix;
+}
+
+template<typename T, size_t N>
+void Inverse(Matrix<T, N, N> &matrix) {
+  Matrix<T, N, N> inverse_matrix = GetInversed(matrix);
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = 0; j < N; ++j) {
+      matrix.At(i, j) = inverse_matrix.At(i, j);
+    }
   }
 }
-
-T determinant = matrix.At(0, 0) * matrix.At(1, 1) * matrix(2, 2);
-determinant += matrix.At(0, 1) * matrix.At(1, 2) * matrix(2, 0);
-determinant += matrix.At(0, 2) * matrix.At(1, 0) * matrix.At(2, 1);
-determinant -= matrix.At(2, 0) * matrix.At(1, 1) * matrix.At(0, 2);
-determinant -= matrix.At(2, 1) * matrix.At(1, 2) * matrix.At(0, 0);
-determinant -= matrix.At(2, 2) * matrix.At(1, 0) * matrix.At(0, 1);
-template<typename T, size_t N>
-Matrix<T, N, N> GetInversed(const Matrix<T, N, N> &matrix) {
-
-}
-
-template<typename T, size_t N>
-void Inverse(const Matrix<T, N, N> &matrix) {
-
-}
-*/
 
 #endif
