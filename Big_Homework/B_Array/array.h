@@ -1,6 +1,7 @@
 #ifndef ARRAY
 #define ARRAY
 
+#define ARRAY_TRAITS_IMPLEMENTED
 #include <iostream>
 #include <stdexcept>
 
@@ -25,7 +26,7 @@ class Array {
   T &Back();
   const T &Back() const;
   T *Data();
-  const T* Data() const;
+  const T *Data() const;
 
   [[nodiscard]] size_t Size() const;
   [[nodiscard]] bool Empty() const;
@@ -116,5 +117,36 @@ void Array<T, N>::Swap(Array<T, N> &other) {
   }
 }
 
+template<typename T>
+size_t GetSize(const T &) {
+  return 0;
+}
+
+template<typename T, size_t N>
+size_t GetSize(T (&)[N]) {
+  return N;
+}
+
+template<typename T>
+size_t GetRank(const T &) {
+  return 0;
+}
+
+template<typename T, size_t N>
+size_t GetRank(T (&arr)[N]) {
+  size_t ans = 1 + GetRank(arr[0]);
+  return ans;
+}
+
+template<typename T>
+size_t GetNumElements(const T &) {
+  return 1;
+}
+
+template<typename T, size_t N>
+size_t GetNumElements(T (&arr)[N]) {
+  size_t ans = GetSize(arr) * GetNumElements(arr[0]);
+  return ans;
+}
 
 #endif

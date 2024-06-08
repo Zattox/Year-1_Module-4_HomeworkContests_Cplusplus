@@ -194,4 +194,5 @@ TEST_CASE("GetNumElements", "[Array Traits]") {
     REQUIRE(GetNumElements(arr) == 900);
   }
 }
+
 #endif  // ARRAY_TRAITS_IMPLEMENTED
