@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iterator>
 #include <cstddef>
+#include <cstdint>
 
 template<typename T>
 class MyIterator {
@@ -14,36 +15,91 @@ class MyIterator {
   using pointer = T *;
   using reference = T &;
 
-  MyIterator();
-  MyIterator(pointer ptr);
+  MyIterator() : ptr_(nullptr) {
+  }
 
-  T &operator[](size_t index);
-  const T &operator[](size_t index) const;
+  explicit MyIterator(pointer ptr) : ptr_(ptr) {
+  }
 
-  reference operator*() const;
-  pointer operator->();
+  reference operator*() const {
+    return *ptr_;
+  }
 
-  MyIterator& operator++();
-  MyIterator operator++(int);
-  MyIterator& operator--();
-  MyIterator operator--(int);
+  pointer operator->() {
+    return ptr_;
+  }
 
-  friend bool operator==(const MyIterator &it1, const MyIterator &it2);
-  friend bool operator!=(const MyIterator &it1, const MyIterator &it2);
-  friend bool operator>(const MyIterator &it1, const MyIterator &it2);
-  friend bool operator<(const MyIterator &it1, const MyIterator &it2);
-  friend bool operator>=(const MyIterator &it1, const MyIterator &it2);
-  friend bool operator<=(const MyIterator &it1, const MyIterator &it2);
+  MyIterator &operator++() {
+    ++ptr_;
+    return *this;
+  }
 
-  MyIterator operator+(const MyIterator &other_it) const;
-  MyIterator operator-(const MyIterator &other_it) const;
-  MyIterator &operator+=(const MyIterator &other_it);
-  MyIterator &operator-=(const MyIterator &other_it);
+  const MyIterator operator++(int) {
+    const MyIterator tmp = *this;
+    ++(*this);
+    return tmp;
+  }
 
-  friend MyIterator operator+(const MyIterator &it, const int64_t &alpha);
-  friend MyIterator operator-(const MyIterator &it, const int64_t &alpha);
-  MyIterator &operator+=(const int64_t &alpha);
-  MyIterator &operator-=(const int64_t &alpha);
+  MyIterator &operator--() {
+    --ptr_;
+    return *this;
+  }
+
+  const MyIterator operator--(int) {
+    const MyIterator tmp = *this;
+    --(*this);
+    return tmp;
+  }
+
+  friend bool operator==(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ == it2.ptr_;
+  }
+
+  friend bool operator!=(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ != it2.ptr_;
+  }
+
+  friend bool operator>(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ > it2.ptr_;
+  }
+
+  friend bool operator<(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ < it2.ptr_;
+  }
+
+  friend bool operator>=(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ >= it2.ptr_;
+  }
+
+  friend bool operator<=(const MyIterator &it1, const MyIterator &it2) {
+    return it1.ptr_ <= it2.ptr_;
+  }
+
+  friend difference_type operator-(const MyIterator &it1, const MyIterator &it2) {
+    return (it1.ptr_ - it2.ptr_);
+  }
+
+  friend MyIterator operator+(const MyIterator &it, const int64_t &alpha) {
+    MyIterator result = it;
+    result.ptr_ += alpha;
+    return result;
+  }
+
+  friend MyIterator operator-(const MyIterator &it, const int64_t &alpha) {
+    MyIterator result = it;
+    result.ptr_ -= alpha;
+    return result;
+  }
+
+  MyIterator &operator+=(const int64_t alpha) {
+    ptr_ += alpha;
+    return *this;
+  }
+
+  MyIterator &operator-=(const int64_t alpha) {
+    ptr_ -= alpha;
+    return *this;
+  }
 
  private:
   pointer ptr_;
