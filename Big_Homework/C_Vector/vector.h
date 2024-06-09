@@ -59,15 +59,43 @@ class Vector {
     }
   }
 
-  Vector(const Vector &other) = default;
+  Vector(const Vector &other) : arr_(new T[other.capacity_]), size_(other.size_), capacity_(other.capacity_) {
+    for (size_t i = 0; i < size_; ++i) {
+      arr_[i] = other.arr_[i];
+    }
+  }
 
-  Vector(Vector &&other) = default;
+  Vector(Vector &&other) noexcept: arr_(other.arr_), size_(other.size_), capacity_(other.capacity_) {
+    other.arr_ = nullptr;
+    other.capacity_ = 0;
+    other.size_ = 0;
+  }
 
   ~Vector() = default;
 
-  Vector &operator=(const Vector &other) = default;
+  Vector &operator=(const Vector &other) {
+    if (this != &other) {
+      delete[] arr_;
+      size_ = other.size_;
+      capacity_ = other.capacity_;
+      arr_ = new T[capacity_];
+      std::copy(other.begin(), other.end(), begin());
+    }
+    return *this;
+  }
 
-  Vector &operator=(Vector &&other) = default;
+  Vector &operator=(Vector &&other) noexcept {
+    if (this != &other) {
+      delete[] arr_;
+      arr_ = other.arr_;
+      size_ = other.size_;
+      capacity_ = other.capacity_;
+      other.arr_ = nullptr;
+      other.size_ = 0;
+      other.capacity_ = 0;
+    }
+    return *this;
+  }
 
   [[nodiscard]] SizeType Size() const {
     return size_;
@@ -120,14 +148,14 @@ class Vector {
   }
 
   T *Data() {
-    if (size_ == 0) {
+    if (size_ == 0 && capacity_ == 0) {
       return nullptr;
     }
     return arr_;
   }
 
   const T *Data() const {
-    if (size_ == 0) {
+    if (size_ == 0 && capacity_ == 0) {
       return nullptr;
     }
     return arr_;
@@ -138,57 +166,56 @@ class Vector {
   }
 
   void Resize(size_t new_size) {
-    if (new_size > size_) {
+    if (new_size < capacity_) {
       size_ = new_size;
-      capacity_ = new_size;
-      T *new_arr = new T[capacity_];
+    } else if (new_size > capacity_) {
+      T *new_arr = new T[new_size];
       std::move(begin(), end(), new_arr);
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
-    } else if (new_size < size_) {
+      arr_ = std::move(new_arr);
+      capacity_ = new_size;
       size_ = new_size;
     }
   }
 
   void Resize(size_t new_size, T value) {
-    if (new_size > size_) {
+    if (new_size < capacity_) {
+      if (new_size > size_) {
+        std::fill(begin() + size_, begin() + new_size, value);
+      }
       size_ = new_size;
-      capacity_ = new_size;
-      T *new_arr = new T[capacity_];
+    } else if (new_size > capacity_) {
+      T *new_arr = new T[new_size];
       std::move(begin(), end(), new_arr);
-      std::fill(new_arr, new_arr + capacity_, value);
+      std::fill(new_arr + capacity_, new_arr + new_size, value);
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
-    } else if (new_size < size_) {
+      arr_ = std::move(new_arr);
+      capacity_ = new_size;
       size_ = new_size;
     }
   }
 
   void Reserve(size_t new_capacity) {
     if (new_capacity > capacity_) {
-      capacity_ = new_capacity;
-      T *new_arr = new T[capacity_];
+      T *new_arr = new T[new_capacity];
       std::move(begin(), end(), new_arr);
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
+      arr_ = std::move(new_arr);
+      capacity_ = new_capacity;
     }
   }
 
   void ShrinkToFit() {
     if (capacity_ > size_) {
-      capacity_ = size_;
-      T *new_arr = new T[capacity_];
+      T *new_arr = new T[size_];
       std::move(begin(), end(), new_arr);
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
+      arr_ = std::move(new_arr);
+      capacity_ = size_;
     }
   }
 
@@ -199,36 +226,34 @@ class Vector {
   void PushBack(const T &value) {
     if (size_ < capacity_) {
       arr_[size_] = std::move(value);
-      ++size_;
+      size_ = size_ + 1;
     } else {
-      capacity_ = 2 * capacity_;
-      T *new_arr = new T[capacity_];
+      size_t new_size = capacity_ > 0 ? capacity_ * 2 : 1;
+      T *new_arr = new T[new_size];
       std::move(begin(), end(), new_arr);
-
       new_arr[size_] = std::move(value);
-      ++size_;
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
+      arr_ = std::move(new_arr);
+      capacity_ = new_size;
+      size_ = size_ + 1;
     }
   }
 
   void PushBack(T &&value) {
     if (size_ < capacity_) {
       arr_[size_] = std::move(value);
-      ++size_;
+      size_ = size_ + 1;
     } else {
-      capacity_ = 2 * capacity_;
-      T *new_arr = new T[capacity_];
+      size_t new_size = capacity_ > 0 ? capacity_ * 2 : 1;
+      T *new_arr = new T[new_size];
       std::move(begin(), end(), new_arr);
-
       new_arr[size_] = std::move(value);
-      ++size_;
 
       delete[] arr_;
-      std::move(new_arr, new_arr + capacity_, begin());
-      new_arr = nullptr;
+      arr_ = std::move(new_arr);
+      capacity_ = new_size;
+      size_ = size_ + 1;
     }
   }
 
@@ -247,28 +272,32 @@ class Vector {
     return !(vector1 == vector2);
   }
   friend bool operator<(const Vector<T> &vector1, const Vector<T> &vector2) {
-    if (vector1.size_ == vector2.size_) {
-      SizeType i = 0;
-      for (; i < vector1.size_; ++i) {
-        if (vector1[i] < vector2[i]) {
-          break;
-        }
+    SizeType i = 0;
+    SizeType len = std::min(vector1.size_, vector2.size_);
+    for (; i < len; ++i) {
+      if (vector1[i] != vector2[i]) {
+        break;
       }
-      return vector1[i] < vector2[i];
     }
-    return vector1.size_ < vector2.size_;
+    if (i < len) {
+      return vector1[i] < vector2[i];
+    } else {
+      return vector1.size_ < vector2.size_;
+    }
   }
   friend bool operator>(const Vector<T> &vector1, const Vector<T> &vector2) {
-    if (vector1.size_ == vector2.size_) {
-      SizeType i = 0;
-      for (; i < vector1.size_; ++i) {
-        if (vector1[i] > vector2[i]) {
-          break;
-        }
+    SizeType i = 0;
+    SizeType len = std::min(vector1.size_, vector2.size_);
+    for (; i < len; ++i) {
+      if (vector1[i] != vector2[i]) {
+        break;
       }
-      return vector1[i] > vector2[i];
     }
-    return vector1.size_ > vector2.size_;
+    if (i < len) {
+      return vector1[i] > vector2[i];
+    } else {
+      return vector1.size_ > vector2.size_;
+    }
   }
   friend bool operator<=(const Vector<T> &vector1, const Vector<T> &vector2) {
     return (vector1 < vector2) || (vector1 == vector2);

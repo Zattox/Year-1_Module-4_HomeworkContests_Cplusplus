@@ -1,14 +1,14 @@
 #include <iostream>
-#include <vector>
 #include <string>
 #include <string_view>
+#include <vector>
 #include <type_traits>
 #include "vector.h"
 #include <memory>
 
 void test1() {
   std::vector<int> arr = {1, 2, 3, 4, 5};
-  std::cout << "arr == {1, 2, 3, 4, 5}\n========================================================\n";
+  std::cout << "arr == {1, 2, 3, 4, 5 }\n========================================================\n";
   std::cout << ".begin() 0 +1 -1 : " << *arr.begin() << " ; " << *(++arr.begin()) << " ; " << *(--arr.begin()) << '\n';
   std::cout << ".cbegin() 0 +1 -1 : " << *arr.cbegin() << " ; " << *(++arr.cbegin()) << " ; " << *(--arr.cbegin())
             << '\n';
@@ -95,6 +95,9 @@ void test9() {
   Vector<std::vector<int>> values{{1, 2}, {3, 4, 5}};
   const auto v = std::move(values);
   int z = 0;
+  std::cout << (values.Size() == 0u);
+  std::cout << (values.Capacity() == 0u);
+  std::cout << (values.Data() == nullptr);
 }
 
 void test10() {
@@ -109,68 +112,123 @@ void test_che() {
   std::cout << (arr == nullptr);
 }
 
+template <class T>
+void Equal(const Vector<T>& real, const std::vector<T>& required) {
+  std::cout << std::endl << "EQUAL: ";
+  std::cout << (real.Size() == required.size());
+  for (size_t i = 0u; i < real.Size(); ++i) {
+    std::cout << (real[i] == required[i]);
+  }
+  std::cout << std::endl;
+}
+
 void test11() {
+  Vector<int> values{1, 2, 3};
+  const auto p_values = values.Data();
+  Vector<int> v;
+  v = std::move(values);
+  Equal(v, std::vector<int>{1, 2, 3});
+  std::cout << (p_values == v.Data());
+  std::cout << (values.Size() == 0u);
+  std::cout << (values.Capacity() == 0u);
+  std::cout << (values.Data() == nullptr);
+
+  v = Vector<int>{4, 5, 6};
+  Equal(v, std::vector<int>{4, 5, 6});
+  std::cout << (p_values != v.Data());
+}
+
+void test12() {
+  Vector<std::vector<int>> values{{1, 2}, {3, 4, 5}};
+  const auto v = std::move(values);
+  Equal(v, std::vector<std::vector<int>>{{1, 2}, {3, 4, 5}});
+  std::cout <<(values.Size() == 0u);
+  std::cout <<(values.Capacity() == 0u);
+  std::cout <<(values.Data() == nullptr);
+}
+
+void test13() {
+  Vector<int> empty;
+  empty.Reserve(10u);
+  Equal(empty, std::vector<int>{});
+  std::cout <<(empty.Capacity() >= 10u);
+  std::cout <<(empty.Data() != nullptr);
+}
+
+void test14() {
+  Vector<int> v;
+  v.Resize(5u, 11);
+  Equal(v, std::vector<int>(5u, 11));
+  std::cout <<(v.Capacity() >= 5u);
+  std::cout <<(v.Capacity() <= 10u);
+}
+
+void test15() {
+  Vector<std::unique_ptr<int>> v;
+  for (int i = 0; i < 100; ++i) {
+    v.PushBack(std::make_unique<int>(i));
+    std::cout <<(v.Size() == static_cast<unsigned>(i + 1));
+    std::cout <<(v.Capacity() >= v.Size());
+    std::cout <<(v.Capacity() <= 2 * v.Size());
+  }
+  for (int i = 0; i < 100; ++i) {
+    std::cout <<(*v[i] == i);
+  }
+}
+
+class Exception {};
+
+class Throwable {
+  std::unique_ptr<int> p_ = std::make_unique<int>();  // check d-tor is called
+
+ public:
+  static int until_throw;
+
+  Throwable() {
+    --until_throw;
+    if (until_throw <= 0) {
+      throw Exception{};
+    }
+  }
+
+  Throwable(const Throwable&) : Throwable() {
+  }
+
+  Throwable(Throwable&&) noexcept = default;
+
+  Throwable& operator=(const Throwable&) {
+    --until_throw;
+    if (until_throw <= 0) {
+      throw Exception{};
+    }
+    return *this;
+  }
+
+  Throwable& operator=(Throwable&&) noexcept = default;
+};
+
+int Throwable::until_throw = 0;
+void test16(){
+  Throwable::until_throw = 200;
+  Vector<Throwable> v;
+  v.Reserve(100u);
+  const auto capacity = v.Capacity();
+  const auto data = v.Data();
+  Throwable::until_throw = static_cast<int>(capacity) + 2;
+  for (size_t i = 0; i < capacity; ++i) {
+    v.PushBack({});
+  }
+}
+
+void test17() {
   const Vector<int> large(1000, 11);
   Vector<int> small{1, 2, 3};
   small = large;
-}
-
-void test_it1() {
-  std::cout << "test_id1 : ";
-  using ConstIterator = Vector<int>::ConstIterator;
-
-  std::cout << (std::is_same_v<ConstIterator, decltype(std::declval<const Vector<int>>().begin())>);
-  std::cout << (std::is_same_v<ConstIterator, decltype(std::declval<const Vector<int>>().end())>);
-
-  using Traits = std::iterator_traits<ConstIterator>;
-  std::cout << ((std::is_same_v<Traits::value_type, int>));
-  std::cout << ((std::is_same_v<Traits::reference, decltype(*std::declval<ConstIterator>())>));
-  std::cout << ((std::is_base_of_v<std::random_access_iterator_tag, Traits::iterator_category>));
-
-}
-
-void test_it2() {
-  std::cout << "test_id2 : ";
-
-  using ReverseIterator = Vector<int>::ReverseIterator;
-  std::cout << ((std::is_same_v<ReverseIterator, decltype(std::declval<Vector<int>>().rbegin())>));
-  std::cout <<((std::is_same_v<ReverseIterator, decltype(std::declval<Vector<int>>().rend())>));
-  std::cout <<((std::is_same_v<ReverseIterator, std::reverse_iterator<Vector<int>::Iterator>>));
-
-  using Traits = std::iterator_traits<ReverseIterator>;
-  std::cout <<((std::is_same_v<Traits::value_type, int>));
-  std::cout <<((std::is_same_v<Traits::reference, decltype(*std::declval<ReverseIterator>())>));
-  std::cout <<((std::is_base_of_v<std::random_access_iterator_tag, Traits::iterator_category>));
-}
-
-void test_it2_2(){
-  Vector<int> v(10u);
-  int i = 0;
-  for (auto it = v.rbegin(); it != v.rend(); ++it) {
-    *it = ++i;
-  }
-  i = 11;
-  for (auto& x : v) {
-    std::cout << (x == --i);
-  }
-}
-
-void test_it3() {
-  std::cout << "test_id3 : ";
-  using ConstReverseIterator = Vector<int>::ConstReverseIterator;
-  std::cout <<((std::is_same_v<ConstReverseIterator, decltype(std::declval<Vector<int>>().crbegin())>));
-  std::cout <<((std::is_same_v<ConstReverseIterator, decltype(std::declval<Vector<int>>().crend())>));
-  std::cout <<((std::is_same_v<ConstReverseIterator, decltype(std::declval<const Vector<int>>().rbegin())>));
-  std::cout <<((std::is_same_v<ConstReverseIterator, decltype(std::declval<const Vector<int>>().rend())>));
-  std::cout <<((std::is_same_v<ConstReverseIterator, std::reverse_iterator<Vector<int>::ConstIterator>>));
-
-  using Traits = std::iterator_traits<ConstReverseIterator>;
-  std::cout <<((std::is_same_v<Traits::value_type, int>));
-  std::cout <<((std::is_same_v<Traits::reference, decltype(*std::declval<ConstReverseIterator>())>));
-  std::cout <<((std::is_base_of_v<std::random_access_iterator_tag, Traits::iterator_category>));
+  Equal(large, std::vector<int>(1000, 11));
+  Equal(small, std::vector<int>(1000, 11));
 }
 
 int main() {
-  test_it2_2();
+  test17();
   return 0;
 }
