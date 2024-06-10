@@ -9,9 +9,9 @@
 template<typename T>
 class Vector {
  private:
-  T *arr_;
-  size_t size_;
-  size_t capacity_;
+  T *arr_ = nullptr;
+  size_t size_ = 0;
+  size_t capacity_ = 0;
  public:
   using ValueType = T;
   using Pointer = T *;
@@ -30,28 +30,90 @@ class Vector {
   explicit Vector(SizeType size) : arr_(new T[size]), size_(size), capacity_(size) {
   }
 
-  Vector(SizeType size, ValueType value) : arr_(new T[size]), size_(size), capacity_(size) {
-    std::fill(begin(), end(), value);
+  Vector(SizeType size, ValueType value) {
+    size_t new_sz = size;
+    T *new_arr = new T[new_sz];
+    try {
+      for (size_t i = 0; i < size; ++i) {
+        new_arr[i] = value;
+      }
+    } catch (...) {
+      delete[] new_arr;
+      throw;
+    }
+    T *old = arr_;
+    arr_ = new_arr;
+    for (size_t i = 0; i < size_; ++i) {
+      (old + i)->~T();
+    }
+    size_ = new_sz;
+    capacity_ = new_sz;
   }
 
   template<class TemplateIterator, class = std::enable_if_t<std::is_base_of_v<std::forward_iterator_tag,
                                                                               typename std::iterator_traits<
                                                                                   TemplateIterator>::iterator_category>>>
-  Vector(TemplateIterator first, TemplateIterator last) : arr_(new T[last - first]), size_(last - first),
-                                                          capacity_(last - first) {
-    std::copy(first, last, begin());
-  }
-
-  Vector(std::initializer_list<ValueType> list) : arr_(new T[list.size()]), size_(list.size()), capacity_(list.size()) {
-    size_t index = 0;
-    for (auto el : list) {
-      arr_[index] = std::move(el);
-      ++index;
+  Vector(TemplateIterator first, TemplateIterator last) {
+    size_t new_sz = last - first;
+    T *new_arr = new T[new_sz];
+    try {
+      size_t index = 0;
+      for (auto it = first; it != last; ++it) {
+        new_arr[index] = *(it);
+        ++index;
+      }
+    } catch (...) {
+      delete[] new_arr;
+      throw;
     }
+    T *old = arr_;
+    arr_ = new_arr;
+    for (size_t i = 0; i < size_; ++i) {
+      (old + i)->~T();
+    }
+    size_ = new_sz;
+    capacity_ = new_sz;
   }
 
-  Vector(const Vector<T> &other) : arr_(new T[other.capacity_]), size_(other.size_), capacity_(other.capacity_) {
-    std::copy(other.begin(), other.end(), begin());
+  Vector(std::initializer_list<ValueType> list) {
+    size_t new_sz = list.size();
+    T *new_arr = new T[new_sz];
+    try {
+      size_t index = 0;
+      for (auto el : list) {
+        new_arr[index] = el;
+        ++index;
+      }
+    } catch (...) {
+      delete[] new_arr;
+      throw;
+    }
+    T *old = arr_;
+    arr_ = new_arr;
+    for (size_t i = 0; i < size_; ++i) {
+      (old + i)->~T();
+    }
+    size_ = new_sz;
+    capacity_ = new_sz;
+  }
+
+  Vector(const Vector<T> &other) {
+    T *new_arr = new T[other.size_];
+    try {
+      for (size_t i = 0; i < other.size_; ++i) {
+        new_arr[i] = other.arr_[i];
+      }
+    } catch (...) {
+      delete[] new_arr;
+      throw;
+    }
+    T *old = arr_;
+    arr_ = new_arr;
+    for (size_t i = 0; i < size_; ++i) {
+      (old + i)->~T();
+    }
+    size_ = other.size_;
+    capacity_ = other.capacity_;
   }
 
   Vector(Vector &&other) noexcept: arr_(other.arr_), size_(other.size_), capacity_(other.capacity_) {
@@ -184,13 +246,22 @@ class Vector {
       size_ = new_size;
     } else if (new_size > capacity_) {
       T *new_arr = new T[new_size];
-      std::move(begin(), end(), new_arr);
-      std::fill(new_arr + capacity_, new_arr + new_size, value);
-
-      delete[] arr_;
-      arr_ = std::move(new_arr);
-      capacity_ = new_size;
+      try {
+        for (size_t i = 0; i < size_; ++i) {
+          new_arr[i] = arr_[i];
+        }
+        for (size_t i = size_; i < new_size; ++i) {
+          new_arr[i] = value;
+        }
+      } catch (...) {
+        delete[] new_arr;
+        throw;
+      }
+      T *old = arr_;
+      arr_ = new_arr;
       size_ = new_size;
+      capacity_ = new_size;
+      delete[] old;
     }
   }
 
@@ -227,13 +298,20 @@ class Vector {
     } else {
       size_t new_size = capacity_ > 0 ? capacity_ * 2 : 1;
       T *new_arr = new T[new_size];
-      std::move(begin(), end(), new_arr);
-      new_arr[size_] = std::move(value);
-
-      delete[] arr_;
-      arr_ = std::move(new_arr);
+      try {
+        for (size_t i = 0; i < size_; ++i) {
+          new_arr[i] = arr_[i];
+        }
+        new_arr[size_] = std::move(value);
+      } catch (...) {
+        delete[] new_arr;
+        throw;
+      }
+      T *old = arr_;
+      arr_ = new_arr;
+      ++size_;
       capacity_ = new_size;
-      size_ = size_ + 1;
+      delete[] old;
     }
   }
 
@@ -241,7 +319,6 @@ class Vector {
     if (size_ >= capacity_) {
       auto new_cap = capacity_ == 0 ? 1 : 2 * capacity_;
       auto new_data = new T[new_cap];
-
       std::move(begin(), end(), new_data);
       delete[] arr_;
       arr_ = new_data;
