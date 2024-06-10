@@ -9,11 +9,11 @@
 template<typename T>
 class MyIterator {
  public:
-  using iterator_category = std::random_access_iterator_tag;
-  using difference_type = std::ptrdiff_t;
-  using value_type = T;
-  using pointer = T *;
-  using reference = T &;
+  using iterator_category = std::random_access_iterator_tag; // NOLINT
+  using difference_type = std::ptrdiff_t; // NOLINT
+  using value_type = T; // NOLINT
+  using pointer = T *; // NOLINT
+  using reference = T &; // NOLINT
 
   MyIterator() : ptr_(nullptr) {
   }

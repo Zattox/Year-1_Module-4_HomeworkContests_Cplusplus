@@ -9,11 +9,11 @@
 template<typename T>
 class MyConstIterator {
  public:
-  using iterator_category = std::contiguous_iterator_tag;
-  using difference_type = std::ptrdiff_t;
-  using value_type = T;
-  using pointer = const T *;
-  using reference = const T &;
+  using iterator_category = std::random_access_iterator_tag; // NOLINT
+  using difference_type = std::ptrdiff_t; // NOLINT
+  using value_type = T; // NOLINT
+  using pointer = const T *; // NOLINT
+  using reference = const T &; // NOLINT
 
   MyConstIterator() : ptr_(nullptr) {
   }

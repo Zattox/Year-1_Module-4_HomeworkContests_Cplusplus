@@ -24,34 +24,25 @@ class Vector {
   using ReverseIterator = std::reverse_iterator<Iterator>;
   using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
 
-  Vector() {
-    size_ = 0;
-    capacity_ = 0;
-    arr_ = new T[0];
+  Vector() : arr_(new T[0]), size_(0), capacity_(0) {
   }
 
-  explicit Vector(SizeType size) : size_(size), capacity_(size) {
-    arr_ = new T[capacity_];
+  explicit Vector(SizeType size) : arr_(new T[size]), size_(size), capacity_(size) {
   }
 
-  Vector(SizeType size, ValueType value) : size_(size), capacity_(size) {
-    arr_ = new T[capacity_];
+  Vector(SizeType size, ValueType value) : arr_(new T[size]), size_(size), capacity_(size) {
     std::fill(begin(), end(), value);
   }
 
   template<class TemplateIterator, class = std::enable_if_t<std::is_base_of_v<std::forward_iterator_tag,
                                                                               typename std::iterator_traits<
                                                                                   TemplateIterator>::iterator_category>>>
-  Vector(TemplateIterator first, TemplateIterator last) : size_(last - first),
+  Vector(TemplateIterator first, TemplateIterator last) : arr_(new T[last - first]), size_(last - first),
                                                           capacity_(last - first) {
-    arr_ = new T[capacity_];
     std::copy(first, last, begin());
   }
 
-  Vector(std::initializer_list<ValueType> list) {
-    size_ = list.size();
-    capacity_ = list.size();
-    arr_ = new T[capacity_];
+  Vector(std::initializer_list<ValueType> list) : arr_(new T[list.size()]), size_(list.size()), capacity_(list.size()) {
     size_t index = 0;
     for (auto el : list) {
       arr_[index] = std::move(el);
@@ -59,10 +50,8 @@ class Vector {
     }
   }
 
-  Vector(const Vector &other) : arr_(new T[other.capacity_]), size_(other.size_), capacity_(other.capacity_) {
-    for (size_t i = 0; i < size_; ++i) {
-      arr_[i] = other.arr_[i];
-    }
+  Vector(const Vector<T> &other) : arr_(new T[other.capacity_]), size_(other.size_), capacity_(other.capacity_) {
+    std::copy(other.begin(), other.end(), begin());
   }
 
   Vector(Vector &&other) noexcept: arr_(other.arr_), size_(other.size_), capacity_(other.capacity_) {
@@ -71,16 +60,24 @@ class Vector {
     other.size_ = 0;
   }
 
-  ~Vector() = default;
+  ~Vector() {
+    delete[] arr_;
+  }
 
   Vector &operator=(const Vector &other) {
-    if (this != &other) {
-      delete[] arr_;
-      size_ = other.size_;
-      capacity_ = other.capacity_;
-      arr_ = new T[capacity_];
-      std::copy(other.begin(), other.end(), begin());
+    if (this == &other) {
+      return *this;
     }
+    delete[] arr_;
+    size_ = other.size_;
+    capacity_ = other.capacity_;
+    arr_ = nullptr;
+
+    if (size_) {
+      arr_ = new T[static_cast<std::size_t>(other.size_)];
+    }
+    std::copy_n(other.arr_, size_, arr_);
+
     return *this;
   }
 
@@ -110,11 +107,11 @@ class Vector {
   }
 
   T &operator[](size_t index) {
-    return *(arr_ + index);
+    return arr_[index];
   }
 
   const T &operator[](size_t index) const {
-    return *(arr_ + index);
+    return arr_[index];
   }
 
   T &At(size_t index) {
@@ -140,11 +137,11 @@ class Vector {
   }
 
   T &Back() {
-    return *(arr_ + size_ - 1);
+    return arr_[size_ - 1];
   }
 
   const T &Back() const {
-    return *(arr_ + size_ - 1);
+    return arr_[size_ - 1];
   }
 
   T *Data() {
@@ -241,20 +238,16 @@ class Vector {
   }
 
   void PushBack(T &&value) {
-    if (size_ < capacity_) {
-      arr_[size_] = std::move(value);
-      size_ = size_ + 1;
-    } else {
-      size_t new_size = capacity_ > 0 ? capacity_ * 2 : 1;
-      T *new_arr = new T[new_size];
-      std::move(begin(), end(), new_arr);
-      new_arr[size_] = std::move(value);
+    if (size_ >= capacity_) {
+      auto new_cap = capacity_ == 0 ? 1 : 2 * capacity_;
+      auto new_data = new T[new_cap];
 
+      std::move(begin(), end(), new_data);
       delete[] arr_;
-      arr_ = std::move(new_arr);
-      capacity_ = new_size;
-      size_ = size_ + 1;
+      arr_ = new_data;
+      capacity_ = new_cap;
     }
+    arr_[size_++] = std::move(value);
   }
 
   friend bool operator==(const Vector<T> &vector1, const Vector<T> &vector2) {
@@ -268,9 +261,11 @@ class Vector {
     }
     return false;
   }
+
   friend bool operator!=(const Vector<T> &vector1, const Vector<T> &vector2) {
     return !(vector1 == vector2);
   }
+
   friend bool operator<(const Vector<T> &vector1, const Vector<T> &vector2) {
     SizeType i = 0;
     SizeType len = std::min(vector1.size_, vector2.size_);
@@ -281,10 +276,10 @@ class Vector {
     }
     if (i < len) {
       return vector1[i] < vector2[i];
-    } else {
-      return vector1.size_ < vector2.size_;
     }
+    return vector1.size_ < vector2.size_;
   }
+
   friend bool operator>(const Vector<T> &vector1, const Vector<T> &vector2) {
     SizeType i = 0;
     SizeType len = std::min(vector1.size_, vector2.size_);
@@ -295,13 +290,14 @@ class Vector {
     }
     if (i < len) {
       return vector1[i] > vector2[i];
-    } else {
-      return vector1.size_ > vector2.size_;
     }
+    return vector1.size_ > vector2.size_;
   }
+
   friend bool operator<=(const Vector<T> &vector1, const Vector<T> &vector2) {
     return (vector1 < vector2) || (vector1 == vector2);
   }
+
   friend bool operator>=(const Vector<T> &vector1, const Vector<T> &vector2) {
     return (vector1 > vector2) || (vector1 == vector2);
   }
