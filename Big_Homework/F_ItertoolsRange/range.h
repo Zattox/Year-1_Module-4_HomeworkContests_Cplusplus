@@ -4,7 +4,6 @@
 #include <iterator>
 #include <stdexcept>
 #include "RangeIterator.h"
-#define REVERSE_RANGE_IMPLEMENTED
 
 template<typename T>
 class RangeClass {
@@ -12,11 +11,11 @@ class RangeClass {
   RangeClass(const T &start, const T &stop, const T &step) : start_{start}, stop_{stop}, step_{step} {
   }
 
-  RangeIterator<T> begin() const {
+  RangeIterator<T> begin() const { //NOLINT
     return RangeIterator<T>(start_, step_, start_);
   }
 
-  RangeIterator<T> end() const {
+  RangeIterator<T> end() const { //NOLINT
     return RangeIterator<T>(stop_, step_, start_);
   }
 

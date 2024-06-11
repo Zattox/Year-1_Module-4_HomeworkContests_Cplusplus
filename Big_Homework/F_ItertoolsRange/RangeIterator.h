@@ -8,12 +8,12 @@
 template<typename T>
 class RangeIterator {
  public:
-  typedef std::forward_iterator_tag iterator_category;
-  typedef T value_type;
-  typedef T &reference;
-  typedef T *pointer;
+  using iterator_category = std::forward_iterator_tag; //NOLINT
+  using value_type = T; //NOLINT
+  using reference = T &; //NOLINT
+  using pointer = T *; //NOLINT
 
-  RangeIterator(T value, T step, T end_) : cur_value_{value}, step_{step}, end_value_{end_}, reverse_{step > 0} {
+  RangeIterator(T value, T step, T end) : cur_value_{value}, step_{step}, end_value_{end}, reverse_{step > 0} {
   }
 
   RangeIterator operator++() {
