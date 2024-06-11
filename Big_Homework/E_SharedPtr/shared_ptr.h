@@ -50,6 +50,7 @@ class SharedPtr {
 
   SharedPtr &operator=(const SharedPtr &other) {
     if (this != &other) {
+      delete counter_;
       ptr_ = other.ptr_;
       counter_ = other.counter_;
       if (counter_ != nullptr) {
