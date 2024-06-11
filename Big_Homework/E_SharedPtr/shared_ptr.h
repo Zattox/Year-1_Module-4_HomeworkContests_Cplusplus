@@ -6,8 +6,8 @@
 template<typename T>
 class SharedPtr {
  private:
-  T *ptr_;
-  size_t *counter_;
+  T *ptr_ = nullptr;
+  size_t *counter_ = nullptr;
  public:
   SharedPtr() {
     ptr_ = nullptr;
@@ -77,6 +77,9 @@ class SharedPtr {
       --(*counter_);
     }
     ptr_ = ptr;
+    if (counter_ == nullptr || (*counter_) == 0) {
+      delete counter_;
+    }
     if (ptr_ == nullptr) {
       counter_ = nullptr;
     } else {
