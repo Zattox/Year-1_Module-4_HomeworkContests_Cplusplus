@@ -3,4 +3,4 @@ project(F_ItertoolsRange)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(F_ItertoolsRange main.cpp)
+add_executable(F_ItertoolsRange range_public_test.cpp)
