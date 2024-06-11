@@ -3,4 +3,4 @@ project(E_SharedPtr)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(E_SharedPtr main.cpp)
+add_executable(E_SharedPtr shared_ptr_public_test.cpp)
