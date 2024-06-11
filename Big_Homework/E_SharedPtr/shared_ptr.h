@@ -40,7 +40,7 @@ class SharedPtr {
   }
 
   ~SharedPtr() {
-    if (counter_ == nullptr || *counter_ == 0) {
+    if (counter_ == nullptr || *counter_ <= 1) {
       delete ptr_;
       delete counter_;
     } else {
