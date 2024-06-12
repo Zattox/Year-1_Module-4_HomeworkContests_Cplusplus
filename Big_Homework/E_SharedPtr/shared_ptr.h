@@ -1,7 +1,7 @@
 #ifndef SHARED_PTR
 #define SHARED_PTR
 
-#include <iostream>
+#include <future>
 
 template<typename T>
 class SharedPtr {
@@ -9,48 +9,41 @@ class SharedPtr {
   T *ptr_ = nullptr;
   size_t *counter_ = nullptr;
  public:
-  SharedPtr() {
-    ptr_ = nullptr;
-    counter_ = nullptr;
+  SharedPtr() : ptr_(nullptr) {
   }
 
-  explicit SharedPtr(std::nullptr_t) {
-    ptr_ = nullptr;
-    counter_ = nullptr;
+  explicit SharedPtr(T *ptr) : ptr_(ptr) {
+    if (ptr_) {
+      counter_ = new size_t(1);
+    }
   }
 
-  explicit SharedPtr(T *ptr) {
-    ptr_ = ptr;
-    counter_ = new size_t(1);
-  }
-
-  SharedPtr(const SharedPtr &other) {
-    ptr_ = other.ptr_;
-    counter_ = other.counter_;
-    if (counter_ != nullptr) {
+  SharedPtr(const SharedPtr &other) : ptr_(other.ptr_), counter_(other.counter_) {
+    if (counter_) {
       ++(*counter_);
     }
   }
 
-  SharedPtr(SharedPtr &&other) noexcept {
-    ptr_ = other.ptr_;
-    counter_ = other.counter_;
+  SharedPtr(SharedPtr &&other) noexcept: ptr_(other.ptr_), counter_(other.counter_) {
     other.ptr_ = nullptr;
     other.counter_ = nullptr;
   }
 
   ~SharedPtr() {
-    if (counter_ == nullptr || *counter_ <= 1) {
-      delete ptr_;
-      delete counter_;
-    } else {
-      --(*counter_);
+    if (!counter_) {
+      return;
     }
+    if (*counter_ > 1) {
+      --(*counter_);
+      return;
+    }
+    delete ptr_;
+    delete counter_;
   }
 
   SharedPtr &operator=(const SharedPtr &other) {
     if (this != &other) {
-      delete counter_;
+      this->~SharedPtr();
       ptr_ = other.ptr_;
       counter_ = other.counter_;
       if (counter_ != nullptr) {
@@ -62,9 +55,7 @@ class SharedPtr {
 
   SharedPtr &operator=(SharedPtr &&other) noexcept {
     if (this != &other) {
-      if (counter_ != nullptr) {
-        --(*counter_);
-      }
+      this->~SharedPtr();
       ptr_ = other.ptr_;
       counter_ = other.counter_;
       other.ptr_ = nullptr;
@@ -74,22 +65,18 @@ class SharedPtr {
   }
 
   void Reset(T *ptr = nullptr) {
-    if (counter_ != nullptr) {
-      --(*counter_);
+    this->~SharedPtr();
+    if (ptr) {
+      counter_ = new size_t(1);
+    } else {
+      counter_ = nullptr;
     }
     ptr_ = ptr;
-    if (counter_ == nullptr || (*counter_) == 0) {
-      delete counter_;
-    }
-    if (ptr_ == nullptr) {
-      counter_ = nullptr;
-    } else {
-      counter_ = new size_t(1);
-    }
   }
 
   void Swap(SharedPtr &other_ptr) {
-    std::swap(*this, other_ptr);
+    std::swap(ptr_, other_ptr.ptr_);
+    std::swap(counter_, other_ptr.counter_);
   }
 
   T *Get() const {
@@ -104,9 +91,6 @@ class SharedPtr {
   }
 
   T &operator*() const {
-    if (!ptr_) {
-      throw "Dereference nullptr";
-    }
     return *ptr_;
   }
 
