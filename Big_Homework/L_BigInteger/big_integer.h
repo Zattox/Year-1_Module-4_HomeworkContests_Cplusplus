@@ -34,14 +34,14 @@ class BigInteger {
   static const int64_t kBase = 1000000000;
 
   BigInteger();
-  //BigInteger(int &&value);
-  BigInteger(const int64_t &value);
-  explicit BigInteger(const std::string &value);
+  BigInteger(int &&value);  // NOLINT
+  BigInteger(const int64_t &value);  // NOLINT
+  explicit BigInteger(const char *value);
   BigInteger(const BigInteger &other);
 
   BigInteger &operator=(BigInteger &&other) = default;
   BigInteger &operator=(const BigInteger &other);
-  //BigInteger &operator=(const int64_t &other);
+  BigInteger &operator=(const int64_t &other);
 
   void SetNegative(bool sign);
   [[nodiscard]] bool IsNegative() const;

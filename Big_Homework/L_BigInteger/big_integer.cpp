@@ -6,6 +6,15 @@ BigInteger::BigInteger() {
   digits_.emplace_back(0);
 }
 
+BigInteger::BigInteger(int &&value) {
+  negative_ = (value < 0);
+  int64_t tmp = std::abs(value);
+  do {
+    digits_.push_back(tmp % kBase);
+    tmp /= kBase;
+  } while (tmp != 0);
+}
+
 BigInteger::BigInteger(const int64_t &value) {
   negative_ = (value < 0);
   int64_t tmp = std::abs(value);
@@ -24,7 +33,8 @@ void BigInteger::RemoveLeadingZeros() {
   }
 }
 
-BigInteger::BigInteger(const std::string &value) {
+BigInteger::BigInteger(const char *value_c) {
+  string value(value_c);
   if (value.empty()) {
     digits_.emplace_back(0);
     negative_ = false;
@@ -59,8 +69,8 @@ BigInteger &BigInteger::operator=(const BigInteger &other) {
   return *this;
 }
 
-/*
 BigInteger &BigInteger::operator=(const int64_t &other) {
+  digits_.clear();
   negative_ = (other < 0);
   int64_t tmp = std::abs(other);
   do {
@@ -69,7 +79,7 @@ BigInteger &BigInteger::operator=(const int64_t &other) {
   } while (tmp != 0);
 
   return *this;
-}*/
+}
 
 void BigInteger::SetNegative(bool sign) {
   negative_ = sign;
@@ -424,6 +434,6 @@ std::ostream &operator<<(std::ostream &out, const BigInteger &value) {
 std::istream &operator>>(std::istream &in, BigInteger &value) {
   string number;
   in >> number;
-  value = BigInteger(number);
+  value = BigInteger(number.c_str());
   return in;
 }
