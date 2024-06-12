@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "big_integer.h"
+#include "big_integer.cpp"
 #include "big_integer.h"  // check include guards
 
 TEST_CASE("Constructors") {
@@ -34,7 +35,7 @@ TEST_CASE("Constructors") {
   REQUIRE_FALSE(z.IsNegative());
 
   REQUIRE(oss.str() == std::string("100050008\n") + std::string("-9000000002\n") + x_str + "\n" + y_str + "\n" +
-                           z_str.substr(1) + "\n");
+      z_str.substr(1) + "\n");
 }
 
 TEST_CASE("UnaryOperators") {
@@ -49,7 +50,7 @@ TEST_CASE("UnaryOperators") {
   oss << -a << ' ' << -b << '\n';
   REQUIRE(
       oss.str() ==
-      "1234567890123456789012345 -1245673456789345012389012\n-1234567890123456789012345 1245673456789345012389012\n");
+          "1234567890123456789012345 -1245673456789345012389012\n-1234567890123456789012345 1245673456789345012389012\n");
 }
 
 TEST_CASE("CompoundAdd") {
@@ -114,7 +115,7 @@ TEST_CASE("Multiplication") {
   REQUIRE(x * -y == -res);
   REQUIRE(-x * y == -res);
   REQUIRE(-x * -y == res);
-  REQUIRE_THROWS_AS((void)(BigInteger(std::string(50'000, '1').c_str()) * BigInteger(large.c_str())),
+  REQUIRE_THROWS_AS((void) (BigInteger(std::string(50'000, '1').c_str()) * BigInteger(large.c_str())),
                     BigIntegerOverflow);  // NOLINT
 }
 
@@ -125,7 +126,7 @@ TEST_CASE("Increment") {
   REQUIRE(x == BigInteger(2));
   ++x = 0;
   REQUIRE(x == BigInteger(0));
-  (void)(--x)++;
+  (void) (--x)++;
   REQUIRE(x == BigInteger(0));
   REQUIRE_FALSE(x.IsNegative());
 }
@@ -137,13 +138,13 @@ TEST_CASE("Decrement") {
   REQUIRE(x == BigInteger(-2));
   --x = 0;
   REQUIRE(x == BigInteger(0));
-  (void)(++x)--;
+  (void) (++x)--;
   REQUIRE(x == BigInteger(0));
   REQUIRE_FALSE(x.IsNegative());
 }
 
-template <class T>
-void CheckComparisonEqual(const T& lhs, const T& rhs) {
+template<class T>
+void CheckComparisonEqual(const T &lhs, const T &rhs) {
   REQUIRE(lhs == rhs);
   REQUIRE(lhs <= rhs);
   REQUIRE(lhs >= rhs);
@@ -152,8 +153,8 @@ void CheckComparisonEqual(const T& lhs, const T& rhs) {
   REQUIRE_FALSE(lhs > rhs);
 }
 
-template <class T>
-void CheckComparisonLess(const T& lhs, const T& rhs) {
+template<class T>
+void CheckComparisonLess(const T &lhs, const T &rhs) {
   REQUIRE_FALSE(lhs == rhs);
   REQUIRE(lhs <= rhs);
   REQUIRE_FALSE(lhs >= rhs);
@@ -162,8 +163,8 @@ void CheckComparisonLess(const T& lhs, const T& rhs) {
   REQUIRE_FALSE(lhs > rhs);
 }
 
-template <class T>
-void CheckComparisonGreater(const T& lhs, const T& rhs) {
+template<class T>
+void CheckComparisonGreater(const T &lhs, const T &rhs) {
   REQUIRE_FALSE(lhs == rhs);
   REQUIRE_FALSE(lhs <= rhs);
   REQUIRE(lhs >= rhs);

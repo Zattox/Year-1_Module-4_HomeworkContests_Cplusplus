@@ -3,4 +3,4 @@ project(L_BigInteger)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(L_BigInteger main.cpp)
+add_executable(L_BigInteger big_integer_test.cpp)
