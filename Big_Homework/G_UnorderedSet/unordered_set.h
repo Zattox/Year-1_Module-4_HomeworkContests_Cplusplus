@@ -11,8 +11,8 @@ class UnorderedSet {
   UnorderedSet();
   explicit UnorderedSet(size_t count);
   template <typename IteratorType,
-      typename = std::enable_if_t<std::is_base_of_v<
-          std::forward_iterator_tag, typename std::iterator_traits<IteratorType>::iterator_category>>>
+            typename = std::enable_if_t<std::is_base_of_v<
+                std::forward_iterator_tag, typename std::iterator_traits<IteratorType>::iterator_category>>>
   UnorderedSet(IteratorType first, IteratorType last);
   UnorderedSet(const UnorderedSet &other);
   UnorderedSet(UnorderedSet &&other) noexcept;
